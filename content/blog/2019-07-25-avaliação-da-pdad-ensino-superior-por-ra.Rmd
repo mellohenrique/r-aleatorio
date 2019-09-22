@@ -1,0 +1,113 @@
+---
+title: Avaliação da PDAD, ensino superior por RA
+author: Henrique de Mello de Assunção
+date: '2019-09-21'
+slug: avaliação-da-pdad-ensino-superior-por-ra
+categories:
+  - pdad
+  - R
+  - DF
+tags:
+  - Desigualdade
+---
+
+
+Nesta postagem analisei a distribuição de ensino superior por Região Administrativa (RA) do Distrito Federal (DF)[^1]. Para isto utiliza-se dados da Pesquisa Distrital por Amostra de Domicílios (PDAD) de 2018 realizada pela CODEPLAN. O objetivo desta avaliação é mostrar uma característica do Distrito Federal, a desigualdade entre RAs, e o potencial da PDAD como ferramenta de pesquisa.
+
+A avaliação utiliza o *tidyverse* um conjunto de pacotes do R que compartilham uma filosofia em comum. Esta filosofia em comum permite que seja fácil utilizar vários pacotes diferentes durante o processo de análise dos dados. Normalmente é necessário que o usuário traduza o resultado de uma ferramenta para um formato adequado para sua utilização em outra ferramenta, porém, este trabalho é reduzido quando estas compartilham uma mesma filosofia. A avaliação de dados amostrais é feita utilizando o pacote *srvyr*, este pacote também compartilha a filosofia do *tidyverse*, o que facilita a análise. 
+
+A primeira parte da avaliação é a obtenção dos dados. Em seguida se adequá os dados a análise em questão, no caso desta avaliação busca-se saber o porcentual de pessoas com mais de 25 anos que tem ensino superior. 
+
+# Carregando os dados
+
+É necessário baixar os dados da PDAD, obter o nome das RAs e descobrir com base no dicionário dos microdados quais variáveis são de interesse da pesquisa. Os dicionário está disponível no site da CODEPLAN, podendo ser acessado por este [link](http://www.codeplan.df.gov.br/microdados-pdad-2018/).
+
+```{r message = FALSE, warning = FALSE}
+library(tidyverse)
+library(srvyr)
+library(knitr)
+library(kableExtra)
+
+pdad_dados <- read_csv2("http://www.codeplan.df.gov.br/wp-content/uploads/2019/09/pdad_2018_moradores.csv")
+
+```
+
+# Limpando os dados
+
+O segundo passo da avaliação foi arrumar a base de dados para avaliação. Adicionou-se uma tabela com o nome das RAs e e uniou-se essa tabela a base de dados da PDAD. Com isto pode-se trocar a variável da RAs de código númerico para fator. Como a PDAD não tem uma variável que diga se a pessoa tem ensino superior ou não, criou-se uma variável que contivesse essa informação. Uma pessoa foi considerada como se tivesse cursado o ensino superior caso:
+
+1. Tivesse como curso mais elevado que frequentou Especialização de nível superior, mestrado ou doutorado;
+2. Tivesse como curso mais elevado que frequentou Ensino Superior e tivesse concluído o curso;
+3. Estivesse frequentando Especialização de nível superior, mestrado ou doutorado;
+
+```{r message = FALSE}
+ra <- tibble(codigo_ra = 1:31,
+             ras = c("Plano Piloto", "Gama", "Taguatinga", "Brazlândia", "Sobradinho", "Planaltina", "Paranoá", "Núcleo Bandeirante", "Ceilândia", "Guará", "Cruzeiro", "Samambaia", "Santa Maria", "São Sebastião", "Recanto Das Emas", "Lago Sul", "Riacho Fundo",	"Lago Norte",	"Candangolândia",	"Águas Claras",	"Riacho Fundo II", "Sudoeste/Octogonal", "Varjão", "Park Way", "SCIA", "Sobradinho II", "Jardim Botânico", "Itapoã", "SIA", "Vicente Pires", "Fercal"))
+```
+
+````{r}
+pdad_nomeada <- pdad_dados %>% 
+  left_join(ra, by = c("A01ra" = "codigo_ra")) %>% 
+  mutate(ensino_superior = case_when(
+    F11 %in% 9:11 ~ "Possui Ensino Superior",
+    F11 %in% 7:8 & F13 == 1 ~ "Possui Ensino Superior",
+    F07 %in% 10:12 ~ "Possui Ensino Superior",
+    F11 == 99 ~ "Não se aplica",
+    TRUE ~ "Não possui Ensino Superior"
+  ))
+```
+
+Feitas estas alterações é possível realizar a análise de interesse.
+
+# Avaliação usando srvyr
+
+O pacote srvyr permite o uso da sintaxe comum do *tidyverse* para avaliação de dados amostrais. Isso permite análises simples, porém profundas de questões de interesse. No exemplo deste post, busca-se saber o porcentual de pessoas com ensino superior na população de cada RA.
+
+```{r}
+pdad_educao_ra <- bind_rows(
+  pdad_nomeada %>% 
+    filter(idade_calculada >= 25, ensino_superior != "Não se aplica") %>% 
+    as_survey(weight = FATOR_PROJ, strata = A01ra, id = A01nFicha, nest = TRUE) %>% 
+    group_by(ras, ensino_superior) %>% 
+    summarise(formacao_superior = survey_mean( na.rm = TRUE, vartype = "ci")) %>% 
+    filter(ensino_superior == "Possui Ensino Superior") %>% 
+    select(ras, formacao_superior),
+  pdad_nomeada %>% 
+    filter(idade_calculada >= 25, ensino_superior != "Não se aplica") %>% 
+    as_survey(weight = FATOR_PROJ, strata = A01ra, id = A01nFicha, nest = TRUE) %>% 
+    group_by(ensino_superior) %>% 
+    summarise(formacao_superior = survey_mean( na.rm = TRUE, vartype = "ci")) %>% 
+    filter(ensino_superior == "Possui Ensino Superior") %>% 
+    select(formacao_superior) %>% 
+    mutate(ras = "Brasília")) %>% 
+  arrange(desc(formacao_superior))
+  
+
+pdad_educao_ra %>% 
+  set_names("Região Administrativa", "Proporção da população adulta com ensino superior") %>% 
+  knitr::kable(format = "html") %>% 
+  kable_styling("striped") %>% 
+  scroll_box(width = "100%", height = "600px")
+```
+
+Os resultados podem ser visualizados no gráfico abaixo [^2]. De modo geral, observa-se que há uma grande diferença no porcentual de adultos com educação superior entre as RAs. Para servir de parâmetro nas comparações pode-se observar o nível de ensino superior de vários países em 2013 e 2014 neste [link](https://en.wikipedia.org/wiki/List_of_countries_by_tertiary_education_attainment). A tabela usa dados da OCDE do nível de educação terciária para diversos países de pessoas entre 24 e 65 anos. 
+
+```{r}
+pdad_educao_ra %>% 
+  ggplot(aes(x = reorder(ras, formacao_superior), y = formacao_superior, fill = reorder(ras, formacao_superior))) +
+  geom_col() +
+  coord_flip() +
+  theme_bw() +
+  viridis::scale_fill_viridis(discrete = TRUE, option = "D", end = 0.7)+
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "", y = "Porcentagem", fill = "", title = "Percentual de adultos com ensino superior nas Regiões Administrativas do Distrito Federal") +
+  guides(fill = FALSE)
+```
+
+O Distrito Federal como um todo tem um nível de população com ensino superior superio a brasileira (34,8% contra 14%). O Distrito Federal tam mais pessoas com ensino superior do que países como Alemanha, Aústria e França[^3]. Nenhum país tem uma proporção de pessoas de ensino superior quanto o Sudoeste. Outro ponto interessante é a grande amplitude deste valor, a RA com maior proporção de pessoas com ensino superior tem 78% a mais do que a RA com menor valor.
+
+[^1]: A primeira versão desta postagem foi feita em 25 de julho em 2019. Atualizei alterando um pouco a função as_survey.
+
+[^2]: Os resultados diferem ligeiramente dos obtidos pela CODEPLAN, estes resultados podem ser observados neste [link](http://www.codeplan.df.gov.br/wp-content/uploads/2019/03/PDAD_DF-Grupo-de-Renda-compactado.pdf).
+
+[^3]: A comparação entre países não é recomendável, sendo feita aqui apenas por este ser um exercício com um nível de rigor inferior a um estudo mais aprofundado. A comparação não é recomendável devido a diferentes conceitos e padrões serem usados entre os países.

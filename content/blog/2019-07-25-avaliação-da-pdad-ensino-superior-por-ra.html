@@ -1,0 +1,370 @@
+---
+title: Avaliação da PDAD, ensino superior por RA
+author: Henrique de Mello de Assunção
+date: '2019-09-21'
+slug: avaliação-da-pdad-ensino-superior-por-ra
+categories:
+  - pdad
+  - R
+  - DF
+tags:
+  - Desigualdade
+---
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<p>Nesta postagem analisei a distribuição de ensino superior por Região Administrativa (RA) do Distrito Federal (DF)<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Para isto utiliza-se dados da Pesquisa Distrital por Amostra de Domicílios (PDAD) de 2018 realizada pela CODEPLAN. O objetivo desta avaliação é mostrar uma característica do Distrito Federal, a desigualdade entre RAs, e o potencial da PDAD como ferramenta de pesquisa.</p>
+<p>A avaliação utiliza o <em>tidyverse</em> um conjunto de pacotes do R que compartilham uma filosofia em comum. Esta filosofia em comum permite que seja fácil utilizar vários pacotes diferentes durante o processo de análise dos dados. Normalmente é necessário que o usuário traduza o resultado de uma ferramenta para um formato adequado para sua utilização em outra ferramenta, porém, este trabalho é reduzido quando estas compartilham uma mesma filosofia. A avaliação de dados amostrais é feita utilizando o pacote <em>srvyr</em>, este pacote também compartilha a filosofia do <em>tidyverse</em>, o que facilita a análise.</p>
+<p>A primeira parte da avaliação é a obtenção dos dados. Em seguida se adequá os dados a análise em questão, no caso desta avaliação busca-se saber o porcentual de pessoas com mais de 25 anos que tem ensino superior.</p>
+<div id="carregando-os-dados" class="section level1">
+<h1>Carregando os dados</h1>
+<p>É necessário baixar os dados da PDAD, obter o nome das RAs e descobrir com base no dicionário dos microdados quais variáveis são de interesse da pesquisa. Os dicionário está disponível no site da CODEPLAN, podendo ser acessado por este <a href="http://www.codeplan.df.gov.br/microdados-pdad-2018/">link</a>.</p>
+<pre class="r"><code>library(tidyverse)
+library(srvyr)
+library(knitr)
+library(kableExtra)
+
+pdad_dados &lt;- read_csv2(&quot;http://www.codeplan.df.gov.br/wp-content/uploads/2019/09/pdad_2018_moradores.csv&quot;)</code></pre>
+</div>
+<div id="limpando-os-dados" class="section level1">
+<h1>Limpando os dados</h1>
+<p>O segundo passo da avaliação foi arrumar a base de dados para avaliação. Adicionou-se uma tabela com o nome das RAs e e uniou-se essa tabela a base de dados da PDAD. Com isto pode-se trocar a variável da RAs de código númerico para fator. Como a PDAD não tem uma variável que diga se a pessoa tem ensino superior ou não, criou-se uma variável que contivesse essa informação. Uma pessoa foi considerada como se tivesse cursado o ensino superior caso:</p>
+<ol style="list-style-type: decimal">
+<li>Tivesse como curso mais elevado que frequentou Especialização de nível superior, mestrado ou doutorado;</li>
+<li>Tivesse como curso mais elevado que frequentou Ensino Superior e tivesse concluído o curso;</li>
+<li>Estivesse frequentando Especialização de nível superior, mestrado ou doutorado;</li>
+</ol>
+<pre class="r"><code>ra &lt;- tibble(codigo_ra = 1:31,
+             ras = c(&quot;Plano Piloto&quot;, &quot;Gama&quot;, &quot;Taguatinga&quot;, &quot;Brazlândia&quot;, &quot;Sobradinho&quot;, &quot;Planaltina&quot;, &quot;Paranoá&quot;, &quot;Núcleo Bandeirante&quot;, &quot;Ceilândia&quot;, &quot;Guará&quot;, &quot;Cruzeiro&quot;, &quot;Samambaia&quot;, &quot;Santa Maria&quot;, &quot;São Sebastião&quot;, &quot;Recanto Das Emas&quot;, &quot;Lago Sul&quot;, &quot;Riacho Fundo&quot;,    &quot;Lago Norte&quot;,   &quot;Candangolândia&quot;,   &quot;Águas Claras&quot;, &quot;Riacho Fundo II&quot;, &quot;Sudoeste/Octogonal&quot;, &quot;Varjão&quot;, &quot;Park Way&quot;, &quot;SCIA&quot;, &quot;Sobradinho II&quot;, &quot;Jardim Botânico&quot;, &quot;Itapoã&quot;, &quot;SIA&quot;, &quot;Vicente Pires&quot;, &quot;Fercal&quot;))</code></pre>
+<pre class="r"><code>pdad_nomeada &lt;- pdad_dados %&gt;% 
+  left_join(ra, by = c(&quot;A01ra&quot; = &quot;codigo_ra&quot;)) %&gt;% 
+  mutate(ensino_superior = case_when(
+    F11 %in% 9:11 ~ &quot;Possui Ensino Superior&quot;,
+    F11 %in% 7:8 &amp; F13 == 1 ~ &quot;Possui Ensino Superior&quot;,
+    F07 %in% 10:12 ~ &quot;Possui Ensino Superior&quot;,
+    F11 == 99 ~ &quot;Não se aplica&quot;,
+    TRUE ~ &quot;Não possui Ensino Superior&quot;
+  ))</code></pre>
+<p>Feitas estas alterações é possível realizar a análise de interesse.</p>
+</div>
+<div id="avaliacao-usando-srvyr" class="section level1">
+<h1>Avaliação usando srvyr</h1>
+<p>O pacote srvyr permite o uso da sintaxe comum do <em>tidyverse</em> para avaliação de dados amostrais. Isso permite análises simples, porém profundas de questões de interesse. No exemplo deste post, busca-se saber o porcentual de pessoas com ensino superior na população de cada RA.</p>
+<pre class="r"><code>pdad_educao_ra &lt;- bind_rows(
+  pdad_nomeada %&gt;% 
+    filter(idade_calculada &gt;= 25, ensino_superior != &quot;Não se aplica&quot;) %&gt;% 
+    as_survey(weight = FATOR_PROJ, strata = A01ra, id = A01nFicha, nest = TRUE) %&gt;% 
+    group_by(ras, ensino_superior) %&gt;% 
+    summarise(formacao_superior = survey_mean( na.rm = TRUE, vartype = &quot;ci&quot;)) %&gt;% 
+    filter(ensino_superior == &quot;Possui Ensino Superior&quot;) %&gt;% 
+    select(ras, formacao_superior),
+  pdad_nomeada %&gt;% 
+    filter(idade_calculada &gt;= 25, ensino_superior != &quot;Não se aplica&quot;) %&gt;% 
+    as_survey(weight = FATOR_PROJ, strata = A01ra, id = A01nFicha, nest = TRUE) %&gt;% 
+    group_by(ensino_superior) %&gt;% 
+    summarise(formacao_superior = survey_mean( na.rm = TRUE, vartype = &quot;ci&quot;)) %&gt;% 
+    filter(ensino_superior == &quot;Possui Ensino Superior&quot;) %&gt;% 
+    select(formacao_superior) %&gt;% 
+    mutate(ras = &quot;Brasília&quot;)) %&gt;% 
+  arrange(desc(formacao_superior))
+  
+
+pdad_educao_ra %&gt;% 
+  set_names(&quot;Região Administrativa&quot;, &quot;Proporção da população adulta com ensino superior&quot;) %&gt;% 
+  knitr::kable(format = &quot;html&quot;) %&gt;% 
+  kable_styling(&quot;striped&quot;) %&gt;% 
+  scroll_box(width = &quot;100%&quot;, height = &quot;600px&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:600px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Região Administrativa
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Proporção da população adulta com ensino superior
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Sudoeste/Octogonal
+</td>
+<td style="text-align:right;">
+0.8339965
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lago Sul
+</td>
+<td style="text-align:right;">
+0.8029605
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Plano Piloto
+</td>
+<td style="text-align:right;">
+0.7695578
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jardim Botânico
+</td>
+<td style="text-align:right;">
+0.7474887
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lago Norte
+</td>
+<td style="text-align:right;">
+0.7472677
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Park Way
+</td>
+<td style="text-align:right;">
+0.6838842
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Águas Claras
+</td>
+<td style="text-align:right;">
+0.6836525
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cruzeiro
+</td>
+<td style="text-align:right;">
+0.5572980
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Guará
+</td>
+<td style="text-align:right;">
+0.5002921
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SIA
+</td>
+<td style="text-align:right;">
+0.4832856
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vicente Pires
+</td>
+<td style="text-align:right;">
+0.4653382
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Núcleo Bandeirante
+</td>
+<td style="text-align:right;">
+0.3864597
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Taguatinga
+</td>
+<td style="text-align:right;">
+0.3707201
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sobradinho
+</td>
+<td style="text-align:right;">
+0.3512711
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Brasília
+</td>
+<td style="text-align:right;">
+0.3479143
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sobradinho II
+</td>
+<td style="text-align:right;">
+0.3280243
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Candangolândia
+</td>
+<td style="text-align:right;">
+0.2641656
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Riacho Fundo
+</td>
+<td style="text-align:right;">
+0.2565644
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gama
+</td>
+<td style="text-align:right;">
+0.2491338
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+São Sebastião
+</td>
+<td style="text-align:right;">
+0.1857343
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Samambaia
+</td>
+<td style="text-align:right;">
+0.1852710
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Brazlândia
+</td>
+<td style="text-align:right;">
+0.1726818
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santa Maria
+</td>
+<td style="text-align:right;">
+0.1661197
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Planaltina
+</td>
+<td style="text-align:right;">
+0.1599367
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Riacho Fundo II
+</td>
+<td style="text-align:right;">
+0.1556157
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ceilândia
+</td>
+<td style="text-align:right;">
+0.1446258
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Recanto Das Emas
+</td>
+<td style="text-align:right;">
+0.1182166
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paranoá
+</td>
+<td style="text-align:right;">
+0.1015718
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Itapoã
+</td>
+<td style="text-align:right;">
+0.0871307
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Varjão
+</td>
+<td style="text-align:right;">
+0.0839868
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Fercal
+</td>
+<td style="text-align:right;">
+0.0598176
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SCIA
+</td>
+<td style="text-align:right;">
+0.0457174
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Os resultados podem ser visualizados no gráfico abaixo <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>. De modo geral, observa-se que há uma grande diferença no porcentual de adultos com educação superior entre as RAs. Para servir de parâmetro nas comparações pode-se observar o nível de ensino superior de vários países em 2013 e 2014 neste <a href="https://en.wikipedia.org/wiki/List_of_countries_by_tertiary_education_attainment">link</a>. A tabela usa dados da OCDE do nível de educação terciária para diversos países de pessoas entre 24 e 65 anos.</p>
+<pre class="r"><code>pdad_educao_ra %&gt;% 
+  ggplot(aes(x = reorder(ras, formacao_superior), y = formacao_superior, fill = reorder(ras, formacao_superior))) +
+  geom_col() +
+  coord_flip() +
+  theme_bw() +
+  viridis::scale_fill_viridis(discrete = TRUE, option = &quot;D&quot;, end = 0.7)+
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = &quot;&quot;, y = &quot;Porcentagem&quot;, fill = &quot;&quot;, title = &quot;Percentual de adultos com ensino superior nas Regiões Administrativas do Distrito Federal&quot;) +
+  guides(fill = FALSE)</code></pre>
+<p><img src="/blog/2019-07-25-avaliação-da-pdad-ensino-superior-por-ra_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>O Distrito Federal como um todo tem um nível de população com ensino superior superio a brasileira (34,8% contra 14%). O Distrito Federal tam mais pessoas com ensino superior do que países como Alemanha, Aústria e França<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Nenhum país tem uma proporção de pessoas de ensino superior quanto o Sudoeste. Outro ponto interessante é a grande amplitude deste valor, a RA com maior proporção de pessoas com ensino superior tem 78% a mais do que a RA com menor valor.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>A primeira versão desta postagem foi feita em 25 de julho em 2019. Atualizei alterando um pouco a função as_survey.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Os resultados diferem ligeiramente dos obtidos pela CODEPLAN, estes resultados podem ser observados neste <a href="http://www.codeplan.df.gov.br/wp-content/uploads/2019/03/PDAD_DF-Grupo-de-Renda-compactado.pdf">link</a>.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>A comparação entre países não é recomendável, sendo feita aqui apenas por este ser um exercício com um nível de rigor inferior a um estudo mais aprofundado. A comparação não é recomendável devido a diferentes conceitos e padrões serem usados entre os países.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</div>

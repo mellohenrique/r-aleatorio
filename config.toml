@@ -1,0 +1,65 @@
+author = "Henrique de Mello de Assunção"
+baseurl = "/"
+canonifyurls = true
+copyright = "© 2019 Henrique de Mello de Assunção."
+paginate = 5
+theme = "hugo-alageek-theme"
+title = "Site do Henrique"
+
+[params]
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+copyright = "© 2019 Henrique de Mello de Assunção"
+copyrightUrl = ""
+description = "Site do Henrique"
+faviconfile = "img/fav.ico"
+latestpostcount = 5
+logofile = "img/logo.png"
+highlightjs = true
+highlightjslanguages = [ "r", "bash", "css", "diff", "django", "javascript", "python", "yaml" ]
+toc = true
+posts_navigation = true
+progressively = true
+#flattr = "?"
+github = "https://github.com/mellohenrique/"
+#gitlab = "?"
+linkedin = "https://www.linkedin.com/in/henrique-de-mello-de-assun%C3%A7%C3%A3o-a62914141/"
+#telegram = "?"
+#twitter = "?"
+#mastodon_url = "https://mastodon.url/?"
+email = "henrique.mello1992@gmail.com"
+
+[[params.best_posts]]
+#title = "Migrate to Hugo from Jekyll"
+#url = "/blog/migrate-from-jekyll/"
+
+[[menu.primary]]
+identifier = "blog"
+name = "Blog"
+url = "/blog/"
+weight = 10
+
+[[menu.primary]]
+identifier = "sobre"
+name = "Sobre"
+url = "/sobre/"
+weight = 20
+
+[[menu.primary]]
+identifier = "projetos"
+name = "Projetos"
+url = "/projetos/"
+weight = 30
+
+[[menu.primary]]
+identifier = "tags"
+name = "Tags"
+url = "/tags/"
+weight = 50
+
+#[[menu.secondary]]
+#identifier = "patreon"
+#name = "Become a patron"
+#url = "https://www.patreon.com/bePatron?u=10637849"
+#weight = 110
+
+
