@@ -1,5 +1,5 @@
 author = "Henrique de Mello de Assunção"
-baseurl = "https://r-aleatorio.com"
+baseurl = "https://r-aleatorio.com/"
 canonifyurls = true
 copyright = "© 2019 Henrique de Mello de Assunção."
 paginate = 5
@@ -62,5 +62,3 @@ weight = 50
 #name = "Become a patron"
 #url = "https://www.patreon.com/bePatron?u=10637849"
 #weight = 110
-
-
