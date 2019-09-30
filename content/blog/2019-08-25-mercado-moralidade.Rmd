@@ -1,5 +1,5 @@
 ---
-title: Economia e Moralidade\: Market Reasoning as Moral Reasoning
+title: "Economia e Moralidade: Market Reasoning as Moral Reasoning"
 author: Henrique de Mello de Assunção
 date: '2019-08-25'
 categories:
@@ -9,7 +9,6 @@ tags:
   - Artigo
   - Economia
   - Moralidade
-slug: filler-episode-impact-on-naruto
 bibliography: [bibliografia.bib]
 ---
 
