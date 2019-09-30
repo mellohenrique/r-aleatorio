@@ -1,5 +1,5 @@
 author = "Henrique de Mello de Assunção"
-baseurl = "r-aleatorio.com"
+baseurl = "/"
 canonifyurls = true
 copyright = "© 2019 Henrique de Mello de Assunção."
 paginate = 5
