@@ -1,8 +1,8 @@
 ---
-title: License
+title: Licença
 ---
 
-You can use this page to put a license on the contents of your blog, like so:
+A Licença está em inglês. 
 
 > The MIT License (MIT)
 >
