@@ -5,6 +5,7 @@ copyright = "© 2019 Henrique de Mello de Assunção."
 paginate = 5
 theme = "hugo-alageek-theme"
 title = "Site do Henrique"
+disqusshortname = "r-aleatorio-com"
 
 [params]
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
