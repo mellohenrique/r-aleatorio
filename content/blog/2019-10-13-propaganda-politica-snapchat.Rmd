@@ -85,4 +85,6 @@ propaganda_idade %>%
   theme_bw()
 ```
 
-Um exercício simples. Os resultados condizem com o esperado anteriormente, pretendo voltar a fazer algumas análises nesta base de dados. 
+Um exercício simples. Os resultados condizem com o esperado anteriormente, pretendo voltar a fazer algumas análises nesta base de dados no futuro. Observar se houve alteração após 2018 em alguma variável interessante, se existe alteração entre propagandas em inglês e outras, ou algo assim.
+
+=D
