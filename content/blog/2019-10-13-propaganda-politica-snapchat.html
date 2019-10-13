@@ -65,8 +65,7 @@ dt_count_dados &lt;- dados %&gt;%
 ## $ CreativeProperties            &lt;chr&gt; &quot;web_view_url:https://secure.amn...
 ## $ ano                           &lt;int&gt; 2018, 2018, 2018, 2018, 2018, 20...</code></pre>
 <p>Escolheu-se observar quais idades são mais focadas como alvo da propagando política. Vale ressaltar que isto significa apenas observar como as propagandas são feitas no Snapchat. Sem informações sobre o perfil do usuário e como as propagandas foram realizadas existe uma certa limitação na avaliação.</p>
-<p>Várias propagandas possuem informações sobre as faixas etárias alvo. Usando esta informação foi construída uma tabela com a idade mínima e a idade máximo que a propaganda buscava influenciar. A menor idade possível considerada foi 14 e a maior 35, isso ocorreu por estes serão os menores valores declarados na tabela original[^1].</p>
-<p>[^1:] Algumas propagandas aparecem com faixa etária alvo = “18-” e “20+”, neste casos, considerou-se que as faixas etárias alvo seriam “14-18” e “20+35”, respectivamente.</p>
+<p>Várias propagandas possuem informações sobre as faixas etárias alvo. Usando esta informação foi construída uma tabela com a idade mínima e a idade máximo que a propaganda buscava influenciar. A menor idade possível considerada foi 14 e a maior 35, isso ocorreu por estes serão os menores valores declarados na tabela original<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
 <pre class="r"><code>faixa_idade &lt;- dados %&gt;% 
   select(AgeBracket) %&gt;% 
   mutate(min = case_when(
@@ -101,4 +100,10 @@ propaganda_idade %&gt;% DT::datatable() %&gt;%
 <p><img src="/blog/2019-10-13-propaganda-politica-snapchat_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Um exercício simples. Os resultados condizem com o esperado anteriormente, pretendo voltar a fazer algumas análises nesta base de dados.</p>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Algumas propagandas aparecem com faixa etária alvo = “18-” e “20+”, neste casos, considerou-se que as faixas etárias alvo seriam “14-18” e “20+35”, respectivamente.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
 </div>
