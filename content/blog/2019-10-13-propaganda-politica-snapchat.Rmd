@@ -1,7 +1,7 @@
 ---
 title: "Propaganda Política no Snapchat"
 author: Henrique de Mello de Assunção
-date: '2019-08-25'
+date: '2019-10-13'
 categories:
   - Política
 tags:
@@ -16,12 +16,17 @@ tags:
 
 ```{r, message = FALSE}
 library(tidyverse)
+library(widgetframe)
 
 dados <- map_dfr(2018:2019, ~(read_csv(paste0("dados/PoliticalAds_", .x, ".csv")) %>% mutate(ano = .x)))
 
-dados %>%
+dt_count_dados <- dados %>%
   count(CountryCode) %>% 
   DT::datatable()
+```
+
+```{r}
+frameWidget(dt_count_dados)
 ```
 
 A minha primeira ideia ao saber desta rede por meio do projeto [Data is Plural](https://tinyletter.com/data-is-plural) era observar como eram as propagandas políticas realizadas no brasil. Infelizmente não foram realizadas muitas propagandas políticas no Brasil, apenas uma, o que impede uma análise aprofundada.
@@ -66,7 +71,8 @@ propaganda_idade <- tibble(
   idade = 1:35,
   valor = x) 
 
-propaganda_idade %>% DT::datatable()
+propaganda_idade %>% DT::datatable() %>% 
+  frameWidget()
 ```
 
 Observa-se que existe uma quebra aos 18 anos, com o grupo de 17 anos sendo alvo de uma quantidade de propagandas muito inferior ao grupo de 18 anos. Provavelmente isto ocorre pois a partir dos 18 anos a pessoa pode votar nos Estados Unidos (país com maior número de propagandas).
