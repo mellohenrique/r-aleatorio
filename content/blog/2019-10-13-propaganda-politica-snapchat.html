@@ -17,7 +17,7 @@ tags:
 
 <div id="snapchat" class="section level1">
 <h1>Snapchat</h1>
-<p><a href="https://www.snapchat.com/">Snapchat</a> é uma rede social na qual os usuários mandam mensagens com base em imagens para outros usuários da rede. A plataforma <a href="https://www.snap.com/en-US/political-ads/">disponibilizou</a> dados sobre as propagandas políticas feitas na rede social de modo a ter uma plataforma mais transparente para os usuários. Os dados foram coletados do site do snapchat para os anos de 2018 e 2019 e avaliados.</p>
+<p><a href="https://www.snapchat.com/">Snapchat</a> é uma rede social na qual os usuários mandam mensagens com base em imagens para outros usuários da rede. A plataforma <a href="https://www.snap.com/en-US/political-ads/">disponibilizou</a> dados sobre as propagandas políticas feitas na rede social de modo a ter uma plataforma mais transparente para os usuários. Os dados foram coletados do site do Snapchat para os anos de 2018 e 2019 e avaliados.</p>
 <pre class="r"><code>library(tidyverse)
 library(widgetframe)
 
@@ -79,13 +79,13 @@ dt_count_dados &lt;- dados %&gt;%
       TRUE ~ str_extract(AgeBracket, &quot;[:digit:]{2}$&quot;)) %&gt;% 
       as.numeric())</code></pre>
 <p>Calculou-se então quantas propagandas tiveram como alvo o grupo de usuários de 14 anos, 15 anos e assim sucessivamente.</p>
-<pre class="r"><code>x &lt;- numeric(35)
-for (i in 1:35) {
-  x[i] &lt;- sum(i &gt;= faixa_idade$min &amp; i &lt;= faixa_idade$max, na.rm = TRUE)
+<pre class="r"><code>x &lt;- numeric(22)
+for (i in 14:35) {
+  x[i-13] &lt;- sum(i &gt;= faixa_idade$min &amp; i &lt;= faixa_idade$max, na.rm = TRUE)
 }
 
 propaganda_idade &lt;- tibble(
-  idade = 1:35,
+  idade = 14:35,
   valor = x) 
 
 propaganda_idade %&gt;% DT::datatable() %&gt;% 
@@ -95,8 +95,10 @@ propaganda_idade %&gt;% DT::datatable() %&gt;%
 <p>Observa-se que existe uma quebra aos 18 anos, com o grupo de 17 anos sendo alvo de uma quantidade de propagandas muito inferior ao grupo de 18 anos. Provavelmente isto ocorre pois a partir dos 18 anos a pessoa pode votar nos Estados Unidos (país com maior número de propagandas).</p>
 <pre class="r"><code>propaganda_idade %&gt;% 
   ggplot(aes(x = idade, y = valor))+ 
-  geom_col()</code></pre>
+  geom_col() %&gt;% 
+  labs(x = &quot;Idade&quot;, y = &quot;Valor&quot;, title = &quot;Número de propagandas políticas voltadas a cada idade, 14 aos 35 anos&quot;) +
+  theme_bw()</code></pre>
 <p><img src="/blog/2019-10-13-propaganda-politica-snapchat_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>Um exercício simples. Os resultados condizem com o esperado anteriomente, pretendo voltar a fazer algumas análises nesta base de dados.</p>
+<p>Um exercício simples. Os resultados condizem com o esperado anteriormente, pretendo voltar a fazer algumas análises nesta base de dados.</p>
 </div>
 </div>

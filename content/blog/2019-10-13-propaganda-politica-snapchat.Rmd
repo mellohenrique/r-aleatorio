@@ -12,7 +12,7 @@ tags:
 
 # Snapchat
 
-[Snapchat](https://www.snapchat.com/) é uma rede social na qual os usuários mandam mensagens com base em imagens para outros usuários da rede. A plataforma [disponibilizou](https://www.snap.com/en-US/political-ads/) dados sobre as propagandas políticas feitas na rede social de modo a ter uma plataforma mais transparente para os usuários. Os dados foram coletados do site do snapchat para os anos de 2018 e 2019 e avaliados.
+[Snapchat](https://www.snapchat.com/) é uma rede social na qual os usuários mandam mensagens com base em imagens para outros usuários da rede. A plataforma [disponibilizou](https://www.snap.com/en-US/political-ads/) dados sobre as propagandas políticas feitas na rede social de modo a ter uma plataforma mais transparente para os usuários. Os dados foram coletados do site do Snapchat para os anos de 2018 e 2019 e avaliados.
 
 ```{r, message = FALSE}
 library(tidyverse)
@@ -62,13 +62,13 @@ faixa_idade <- dados %>%
 Calculou-se então quantas propagandas tiveram como alvo o grupo de usuários de 14 anos, 15 anos e assim sucessivamente.
 
 ```{r}
-x <- numeric(35)
-for (i in 1:35) {
-  x[i] <- sum(i >= faixa_idade$min & i <= faixa_idade$max, na.rm = TRUE)
+x <- numeric(22)
+for (i in 14:35) {
+  x[i-13] <- sum(i >= faixa_idade$min & i <= faixa_idade$max, na.rm = TRUE)
 }
 
 propaganda_idade <- tibble(
-  idade = 1:35,
+  idade = 14:35,
   valor = x) 
 
 propaganda_idade %>% DT::datatable() %>% 
@@ -80,7 +80,9 @@ Observa-se que existe uma quebra aos 18 anos, com o grupo de 17 anos sendo alvo 
 ```{r}
 propaganda_idade %>% 
   ggplot(aes(x = idade, y = valor))+ 
-  geom_col()
+  geom_col() %>% 
+  labs(x = "Idade", y = "Valor", title = "Número de propagandas políticas voltadas a cada idade, 14 aos 35 anos") +
+  theme_bw()
 ```
 
-Um exercício simples. Os resultados condizem com o esperado anteriomente, pretendo voltar a fazer algumas análises nesta base de dados. 
+Um exercício simples. Os resultados condizem com o esperado anteriormente, pretendo voltar a fazer algumas análises nesta base de dados. 
