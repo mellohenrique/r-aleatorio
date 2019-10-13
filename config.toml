@@ -8,7 +8,7 @@ title = "Site do Henrique"
 disqusshortname = "r-aleatorio-com"
 
 [params]
-ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$", "dados"]
 copyright = "© 2019 Henrique de Mello de Assunção"
 copyrightUrl = ""
 description = "Site do Henrique"

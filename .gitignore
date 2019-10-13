@@ -7,3 +7,4 @@
 /blogdown/*
 *_cache*
 .httr-oauth
+dados/
