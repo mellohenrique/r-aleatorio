@@ -1,0 +1,51 @@
+---
+title: "Simulações e RPG"
+author: Henrique de Mello de Assunção
+date: '2020-02-02'
+thumbnail:
+categories:
+  - RPG
+tags:
+  - R
+  - Estatística
+---
+
+# RPG e Simulações
+RPG é uma atividade fascinante que tem ganho mais ao longo do tempo. Recentemente consegui realizar um sonho antigo de jogar RPG com alguma frequência. Então, esta alteração gerou a vontade de testar alguns _problemas de rpg_, ou seja, situações no jogo em que problemas são resolvidos por meio da geração de número aleatórios, normalmente envolvendo dados.
+
+Com isto em mente, meu primeiro exercício é usar simulações como um mecanismo de se obter resultados.
+
+## O problema
+
+O problema em questão é calcular as probabilidades dos resultados de um jogado de habilidade com vantagem em **D&D**, ou seja, o resultado dos dados da seguinte jogada:
+* O jogador joga dois dados de vinte faces e o resultado é o de maior dado.
+
+## Resultado matemático
+
+O resultado matemático é calculado com base na probabilidade de se obter um resultado x em um dado e um resultado igual ou inferior a este no outro dado. Por exemplo, a única maneira de se obter o resultado um é se obter um em ambos os dados, uma chance em vinte e uma chance em vinte, ou seja, uma chance em 400. A tabela com os resultados possíveis se encontra abaixo.
+
+```{r}
+library(tidyverse)
+
+tibble(Resultados = 1:20,
+       Probabilidades = seq(1, 39, 2)/ 400) %>% 
+  knitr::kable()
+```
+
+## Resultado de simulações
+
+Foram realizados 2.000.000 rolagens de dois dados de vinte faces. A contagem dos resultados podem ser observados na tabela abaixo.
+
+```{r}
+set.seed(10000)
+tibble(resultados = replicate(2000000, max(sample(1:20, size =2, replace = TRUE)))) %>% 
+  count(resultados) %>% 
+  mutate(prop = n/sum(n)) %>% 
+  set_names(c("Resultados", "Número", "Proporção")) %>% 
+  knitr::kable()
+  
+```
+
+## Conclusão
+
+Como esperado os resultados da simulação divergem dos resultados matemáticos, porém esta divergência é mínima. A simulação não é uma ferramenta útil neste cenário, em que o resultado estatístico pode ser calculado facilmente, porém, em cenários em que se obter o resultado correto seja difícil aproxima-los com simulações é útil.

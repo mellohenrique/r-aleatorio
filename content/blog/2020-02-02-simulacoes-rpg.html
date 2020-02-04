@@ -1,0 +1,254 @@
+---
+title: "Simulações e RPG"
+author: Henrique de Mello de Assunção
+date: '2020-02-02'
+thumbnail:
+categories:
+  - RPG
+tags:
+  - R
+  - Estatística
+---
+
+
+
+<div id="rpg-e-simulações" class="section level1">
+<h1>RPG e Simulações</h1>
+<p>RPG é uma atividade fascinante que tem ganho mais ao longo do tempo. Recentemente consegui realizar um sonho antigo de jogar RPG com alguma frequência. Então, esta alteração gerou a vontade de testar alguns <em>problemas de rpg</em>, ou seja, situações no jogo em que problemas são resolvidos por meio da geração de número aleatórios, normalmente envolvendo dados.</p>
+<p>Com isto em mente, meu primeiro exercício é usar simulações como um mecanismo de se obter resultados.</p>
+<div id="o-problema" class="section level2">
+<h2>O problema</h2>
+<p>O problema em questão é calcular as probabilidades dos resultados de um jogado de habilidade com vantagem em <strong>D&amp;D</strong>, ou seja, o resultado dos dados da seguinte jogada:
+* O jogador joga dois dados de vinte faces e o resultado é o de maior dado.</p>
+</div>
+<div id="resultado-matemático" class="section level2">
+<h2>Resultado matemático</h2>
+<p>O resultado matemático é calculado com base na probabilidade de se obter um resultado x em um dado e um resultado igual ou inferior a este no outro dado. Por exemplo, a única maneira de se obter o resultado um é se obter um em ambos os dados, uma chance em vinte e uma chance em vinte, ou seja, uma chance em 400. A tabela com os resultados possíveis se encontra abaixo.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>## v ggplot2 3.2.1     v purrr   0.3.2
+## v tibble  2.1.3     v dplyr   0.8.3
+## v tidyr   1.0.0     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.4.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>tibble(Resultados = 1:20,
+       Probabilidades = seq(1, 39, 2)/ 400) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Resultados</th>
+<th align="right">Probabilidades</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0.0025</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">0.0075</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">0.0125</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">0.0175</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">0.0225</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">0.0275</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">0.0325</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">0.0375</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">0.0425</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">0.0475</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="right">0.0525</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="right">0.0575</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="right">0.0625</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="right">0.0675</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="right">0.0725</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">0.0775</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="right">0.0825</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="right">0.0875</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">0.0925</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">0.0975</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="resultado-de-simulações" class="section level2">
+<h2>Resultado de simulações</h2>
+<pre class="r"><code>set.seed(10000)
+tibble(resultados = replicate(2000000, max(sample(1:20, size =2, replace = TRUE)))) %&gt;% 
+  count(resultados) %&gt;% 
+  mutate(prop = n/sum(n)) %&gt;% 
+  set_names(c(&quot;Resultados&quot;, &quot;Número&quot;, &quot;Proporção&quot;)) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Resultados</th>
+<th align="right">Número</th>
+<th align="right">Proporção</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">5017</td>
+<td align="right">0.0025085</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">15105</td>
+<td align="right">0.0075525</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">25112</td>
+<td align="right">0.0125560</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">35116</td>
+<td align="right">0.0175580</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">44783</td>
+<td align="right">0.0223915</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">54975</td>
+<td align="right">0.0274875</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">65133</td>
+<td align="right">0.0325665</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">74535</td>
+<td align="right">0.0372675</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">85362</td>
+<td align="right">0.0426810</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">95033</td>
+<td align="right">0.0475165</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="right">104729</td>
+<td align="right">0.0523645</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="right">115106</td>
+<td align="right">0.0575530</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="right">124825</td>
+<td align="right">0.0624125</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="right">134679</td>
+<td align="right">0.0673395</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="right">145150</td>
+<td align="right">0.0725750</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">154867</td>
+<td align="right">0.0774335</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="right">165279</td>
+<td align="right">0.0826395</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="right">174805</td>
+<td align="right">0.0874025</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">184880</td>
+<td align="right">0.0924400</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">195509</td>
+<td align="right">0.0977545</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="conclusão" class="section level2">
+<h2>Conclusão</h2>
+<p>Como esperado os resultados da simulação divergem dos resultados matemáticos, porém esta divergência é mínima. A simulação não é uma ferramenta útil neste cenário, em que o resultado estatístico pode ser calculado facilmente, porém, em cenários em que se obter o resultado correto seja difícil aproxima-los com simulações é útil.</p>
+</div>
+</div>

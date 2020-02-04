@@ -1,64 +1,37 @@
-author = "Henrique de Mello de Assunção"
 baseurl = "https://r-aleatorio.com/"
-canonifyurls = true
-copyright = "© 2019 Henrique de Mello de Assunção."
-paginate = 5
-theme = "hugo-alageek-theme"
-title = "Site do Henrique"
-disqusshortname = "r-aleatorio-com"
+title = "Aleatório"
+languageCode = "en-us"
+paginate = "10" # Number of posts per page
+theme = "mainroad"
+disqusshortname = "r-aleatorio-com" # Enable comments by entering your Disqus shortname
+googleAnalytics = "" # Enable Google Analytics by entering your tracking id
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
-[params]
+[Author]
+name = "Henrique de Assunção"
+bio = "Cientista de dados brasileiro, mestre em economia. Gosto de economia, filosofia, teologia, arte, cultura, jogos... Atualmente trabalho na CODEPLAN, este é um site pessoal e qualquer visão, opinião são minhas. "
+avatar = "img/henrique.jpg"
+
+
+[Params]
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$", "dados"]
-copyright = "© 2019 Henrique de Mello de Assunção"
-copyrightUrl = ""
-description = "Site do Henrique"
-faviconfile = "img/fav.ico"
-latestpostcount = 5
-logofile = "img/logo.png"
-highlightjs = true
-highlightjslanguages = [ "r", "bash", "css", "diff", "django", "javascript", "python", "yaml" ]
-toc = true
-posts_navigation = true
-progressively = true
-#flattr = "?"
-github = "mellohenrique/"
-#gitlab = "?"
-linkedin = "henrique-de-mello-de-assun%C3%A7%C3%A3o-a62914141/"
-#telegram = "?"
-#twitter = "?"
-#mastodon_url = "https://mastodon.url/?"
-email = "henrique.mello1992@gmail.com"
+subtitle = "Site do Henrique" # Subtitle of your site
+mainSections = ["blog", "sobre"]
+description = "Blog pessoal do Henrique sobre qualquer coisa" # Description of your site
+opengraph = true
+twitter_cards = false
+readmore = true # Show "Read more" button in list if true
+authorbox = true
+post_navigation = true
+post_meta = ["date", "categories"] # Order of post meta information
 
-[[params.best_posts]]
-#title = "Migrate to Hugo from Jekyll"
-#url = "/blog/migrate-from-jekyll/"
+[Params.sidebar]
+home = "right"   # Configure layout for home page
+list = "right"   # Configure layout for list pages
+single = "right" # Configure layout for single pages
+# Enable widgets in given order
+widgets = ["search", "recent", "categories", "taglist"]
 
-[[menu.primary]]
-identifier = "blog"
-name = "Blog"
-url = "/blog/"
-weight = 10
-
-[[menu.primary]]
-identifier = "sobre"
-name = "Sobre"
-url = "/sobre/"
-weight = 20
-
-[[menu.primary]]
-identifier = "projetos"
-name = "Projetos"
-url = "/projetos/"
-weight = 30
-
-[[menu.primary]]
-identifier = "tags"
-name = "Tags"
-url = "/tags/"
-weight = 50
-
-#[[menu.secondary]]
-#identifier = "patreon"
-#name = "Become a patron"
-#url = "https://www.patreon.com/bePatron?u=10637849"
-#weight = 110
+[Params.widgets]
+recent_num = 5 # Set the number of articles in the "Recent articles" widget
+tags_counter = false # Enable counter for each tag in "Tags" widget (disabled by default)
