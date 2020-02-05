@@ -9,7 +9,7 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [Author]
 name = "Henrique de Assunção"
-bio = "Cientista de dados brasileiro, mestre em economia. Gosto de economia, filosofia, teologia, arte, cultura, jogos... Atualmente trabalho na CODEPLAN, este é um site pessoal e qualquer visão, opinião são minhas. "
+bio = "Cientista de dados brasileiro, mestre em economia. Gosto de economia, filosofia, teologia, arte, cultura, jogos..."
 avatar = "img/henrique.jpg"
 
 
