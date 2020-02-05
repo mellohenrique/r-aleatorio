@@ -11,9 +11,9 @@ tags:
 ---
 
 # RPG e Simulações
-RPG é uma atividade fascinante que tem ganho mais ao longo do tempo. Recentemente consegui realizar um sonho antigo de jogar RPG com alguma frequência. Então, esta alteração gerou a vontade de testar alguns _problemas de rpg_, ou seja, situações no jogo em que problemas são resolvidos por meio da geração de número aleatórios, normalmente envolvendo dados.
+O RPG é uma atividade fascinante que tem ganho mais adeptos ao longo do tempo. Recentemente consegui realizar um sonho antigo de jogar RPG com alguma frequência. Então, esta alteração gerou a vontade de testar alguns _problemas de rpg_, ou seja, situações no jogo em que problemas são resolvidos por meio da geração de números aleatórios, normalmente envolvendo dados.
 
-Com isto em mente, meu primeiro exercício é usar simulações como um mecanismo de se obter resultados.
+Com isto em mente, meu primeiro exercício é usar simulações como um mecanismo de obtenção de resultados.
 
 ## O problema
 
@@ -48,4 +48,4 @@ tibble(resultados = replicate(2000000, max(sample(1:20, size =2, replace = TRUE)
 
 ## Conclusão
 
-Como esperado os resultados da simulação divergem dos resultados matemáticos, porém esta divergência é mínima. A simulação não é uma ferramenta útil neste cenário, em que o resultado estatístico pode ser calculado facilmente, porém, em cenários em que se obter o resultado correto seja difícil aproxima-los com simulações é útil.
+Como esperado, os resultados da simulação divergem dos resultados matemáticos, porém esta divergência é mínima. A simulação não é uma ferramenta tão útil neste cenário, em que o resultado estatístico pode ser calculado facilmente, porém, em cenários em que a obtenção do resultado correto seja algo difícil, portanto aproxima-los com simulações é interessante.
