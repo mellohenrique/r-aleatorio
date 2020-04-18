@@ -1,0 +1,34 @@
+---
+title: "Criação de pacote em R, parte 1"
+author: Henrique de Mello de Assunção
+date: '2020-04-18'
+thumbnail:
+categories:
+  - R
+tags:
+  - R
+  - Simulação
+  - Reprodutibilidade
+---
+
+# Pacotes no R
+
+Pacotes são a principal forma de compartilhamento de código em R. Um pacote é um conjunto de dados, código e documentação com uma estrutura definida que expande as funcionalidades do R. Pacotes podem ser simples ou complexos, com uma única função ou com centanas de funções, podendo ser muito específicos ou flexíveis. Os pacotes são criados pela comunidade de R, com alguns pacotes sendo extremamente famosos como _dplyr_, _data.table_ e _ggplot2_.
+
+Uma das principais vantagens do R é a diversidade de pacotes. Esse blog por exemplo é escrito utilizando o pacote _blogdown_.
+
+# Meu primeiro pacote
+
+Depois de anos utilizando R eu criei meu primeiro pacote. Eu me sinto validado como usuário de R, como se finalmente pudesse dizer que sei algo de R, por ter criado um pacote que pode ser compartilhado com outros[^1].
+
+O pacote que eu criei se chama _simulador.fundeb_ e pode ser obtido no meu _github_, no repositório [mellohenrique/simulador.fundeb](https://github.com/mellohenrique/simulador.fundeb/). O pacote é do [Todos pela Educação](https://www.todospelaeducacao.org.br/) e serve para simular possíveis cenários para o financiamento da educação no Brasil, pelo Fundo de Manutenção e Desenvolvimento da Educação Básica, o FUNDEB. Espera-se que ele contribua para o desenvolvimento da educação brasileira, especialmente pela avaliação de como regras diferentes levam a cenários diferentes para os entes da federação brasileiras.
+
+[^1]: É importante não ter essa mentalidade. Aprender R, Python, Francês, Dota (embora não sugira aprender Dota), Desenho, como a maioria de outro tipo de atividades é um exercício de convivência com o fracasso. O *fracasso* é essencial para o aprendizado e deve se viver *harmoniosamente* com ele.
+
+# Pacotes mencionados
+
+* [data.table](https://github.com/Rdatatable/data.table)
+* [dplyr] (https://dplyr.tidyverse.org/)
+* [ggplot2](https://ggplot2.tidyverse.org/)
+* [blogdown](https://github.com/rstudio/blogdown)
+
