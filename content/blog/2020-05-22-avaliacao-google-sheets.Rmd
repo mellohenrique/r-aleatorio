@@ -1,0 +1,105 @@
+---
+title: "Avaliação de tabela do google sheets"
+author: Henrique de Mello de Assunção
+date: "2020-05-22"
+categories:
+  - Pessoal
+  - Ciência
+tags:
+  - API
+  - Artigos
+  - Análise Exploratória
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Google Sheets
+
+O Google Sheets é um programa de planilhas disponibilizado pelo Google. O programa pode ser acessado por navegadores padrões de graça. O programa concorre com outras ferramentas parecidas como o famoso Excel, atualmente eu utilizo o Google Sheets para documentar algumas ações online. A principal vantagem da ferramenta para mim é esta poder ser acessada de vários lugares.
+
+O _R_ possui alguns pacotes para acessar o google sheets, nesta postagem vou utilizar um pacote específico, _googlesheets4_ para avaliar uma planilha que possuo.
+
+## Pacote
+
+O pacote é uma evolução do antigo _googlesheets_ que parou de ser utilizado por uma alteração na API do Google Sheets. A API passou para versão 4, entãoo novo pacote se chama _googlesheets4_.
+
+Para acessar suas planilhas é necessário autenticar o usuário que é feito pelo seu navegador padrão após usar os seguintes comandos.
+
+```{r, eval = FALSE}
+library(googlesheets4)
+
+googlesheets4::gs4_auth()
+```
+
+A documentação do pacote pode ser acessada no seu respectivo [site](https://googlesheets4.tidyverse.org/index.html). Nesta postagem vou avaliar uma planilha que mantenho dos artigos científicos que eu li.
+
+## Avaliação
+
+Eu mantenho esta planilha desde 2018 e tem ajudado a dar uma ordem aos artigos que leio e não ler artigos repitidos. A planilha contém a data em que comecei o processo de ler o artigo, o nome do artigo, o ano do artigo, área temática, autores, se já foi lido e onde ele está armazenado (esta última informação está contida em várias colunas). 
+
+O primeiro passo é ler a planilha. Nesta avaliação não estou usando a lógica do _tidyverse_ embora o pacote chave, _googlesheets4_ ser parte deste conjunto de pacotes.
+
+```{r}
+tabelas_google <- googlesheets4::gs4_find()
+
+artigos <- googlesheets4::read_sheet(tabelas_google$id[1], na = c("", "Anterior"))
+
+artigos <- janitor::clean_names(artigos)
+```
+
+As colunas do artigo são
+
+```{r}
+names(artigos)
+```
+
+A data guarda o começo do processo de leitura. Estou lendo os artigos desde `r range(artigos$data, na.rm = TRUE)[1]` até `r range(artigos$data, na.rm = TRUE)[2]` com a pandemia dificultando o meu ritmo de leitura.
+
+A maioria dos artigos que eu li são recentes, sendo publicados desde 2010.
+
+```{r}
+library(ggplot2)
+
+ggplot(artigos, aes(x = ano)) +
+  geom_density() +
+  labs(x = "Ano", y = "Densidade", title = "Artigos lidos por ano de publicação do artigo") +
+  theme_bw()
+```
+
+Ainda há muitos artigos antigos o que atrapalha a escala da visualização. O artigo mais antigos é `artigos$titulo[artigos$ano == min(artigos$ano, na.rm = TRUE) & !is.na(artigos$ano)]` de Immanuel Kant.
+
+Deixando apenas artigos publicados desde 2000 pode-se ver que existe um pico por volta de 2016.
+
+```{r}
+ggplot(artigos[artigos$ano >2000,], aes(x = ano)) +
+  geom_density() +
+  labs(x = "Ano", y = "Densidade", title = "Artigos lidos por ano de publicação do artigo desde 2000") +
+  theme_bw()
+```
+
+Por fim queria avaliar de que anos especificos eram os artigos que eu li. Primeiro precisei limpar os dados. A limpeza foi realizada com o código abaixo e o principal objetivo desta foi agrupar os anos em um fator e reduzir o possível número de resultados para que se pudesse avaliar a visualização.
+
+```{r}
+artigos$ano_fator <- forcats::fct_lump_min(as.factor(artigos$ano), min = 20, other_level = "Outros Anos")
+
+artigos$ano_fator <- factor(artigos$ano_fator, levels = names(sort(table(artigos$ano_fator))))
+```
+
+Finalmente, pode-se observar quais os anos que produziram mais artigos que eu li.
+
+```{r}
+ggplot(artigos, aes(x = ano_fator)) +
+  geom_bar() +
+  coord_flip() + 
+  labs(x = "Ano", title = "Artigos lidos por ano") +
+  theme_bw()
+```
+
+
+## Conclusão
+
+O pacote _googlesheets4_ permite trazer o poder de avaliação do R a planilhas pessoais o que permite algumas descobertas, a maioria divertidas e trivais. Possivelmente é possível obter descobertas mais interessantes de planilhas pessoais. Além disso é possível acessar documentos não pessoais o que também é interessante.
+
+

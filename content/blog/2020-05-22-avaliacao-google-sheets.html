@@ -1,0 +1,86 @@
+---
+title: "Avaliação de tabela do google sheets"
+author: Henrique de Mello de Assunção
+date: "2020-05-22"
+categories:
+  - Pessoal
+  - Ciência
+tags:
+  - API
+  - Artigos
+  - Análise Exploratória
+---
+
+
+
+<div id="google-sheets" class="section level2">
+<h2>Google Sheets</h2>
+<p>O Google Sheets é um programa de planilhas disponibilizado pelo Google. O programa pode ser acessado por navegadores padrões de graça. O programa concorre com outras ferramentas parecidas como o famoso Excel, atualmente eu utilizo o Google Sheets para documentar algumas ações online. A principal vantagem da ferramenta para mim é esta poder ser acessada de vários lugares.</p>
+<p>O <em>R</em> possui alguns pacotes para acessar o google sheets, nesta postagem vou utilizar um pacote específico, <em>googlesheets4</em> para avaliar uma planilha que possuo.</p>
+</div>
+<div id="pacote" class="section level2">
+<h2>Pacote</h2>
+<p>O pacote é uma evolução do antigo <em>googlesheets</em> que parou de ser utilizado por uma alteração na API do Google Sheets. A API passou para versão 4, entãoo novo pacote se chama <em>googlesheets4</em>.</p>
+<p>Para acessar suas planilhas é necessário autenticar o usuário que é feito pelo seu navegador padrão após usar os seguintes comandos.</p>
+<pre class="r"><code>library(googlesheets4)
+
+googlesheets4::gs4_auth()</code></pre>
+<p>A documentação do pacote pode ser acessada no seu respectivo <a href="https://googlesheets4.tidyverse.org/index.html">site</a>. Nesta postagem vou avaliar uma planilha que mantenho dos artigos científicos que eu li.</p>
+</div>
+<div id="avaliação" class="section level2">
+<h2>Avaliação</h2>
+<p>Eu mantenho esta planilha desde 2018 e tem ajudado a dar uma ordem aos artigos que leio e não ler artigos repitidos. A planilha contém a data em que comecei o processo de ler o artigo, o nome do artigo, o ano do artigo, área temática, autores, se já foi lido e onde ele está armazenado (esta última informação está contida em várias colunas).</p>
+<p>O primeiro passo é ler a planilha. Nesta avaliação não estou usando a lógica do <em>tidyverse</em> embora o pacote chave, <em>googlesheets4</em> ser parte deste conjunto de pacotes.</p>
+<pre class="r"><code>tabelas_google &lt;- googlesheets4::gs4_find()</code></pre>
+<pre><code>## Using an auto-discovered, cached token.
+## To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+## See gargle&#39;s &quot;Non-interactive auth&quot; vignette for more details:
+## https://gargle.r-lib.org/articles/non-interactive-auth.html</code></pre>
+<pre><code>## The googledrive package is using a cached token for henrique.mello1992@gmail.com.</code></pre>
+<pre class="r"><code>artigos &lt;- googlesheets4::read_sheet(tabelas_google$id[1], na = c(&quot;&quot;, &quot;Anterior&quot;))</code></pre>
+<pre><code>## Using an auto-discovered, cached token.
+## To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+## See gargle&#39;s &quot;Non-interactive auth&quot; vignette for more details:
+## https://gargle.r-lib.org/articles/non-interactive-auth.html</code></pre>
+<pre><code>## The googlesheets4 package is using a cached token for henrique.mello1992@gmail.com.</code></pre>
+<pre><code>## Reading from &quot;Artigos&quot;</code></pre>
+<pre><code>## Range &quot;artigos&quot;</code></pre>
+<pre class="r"><code>artigos &lt;- janitor::clean_names(artigos)</code></pre>
+<p>As colunas do artigo são</p>
+<pre class="r"><code>names(artigos)</code></pre>
+<pre><code>## [1] &quot;data&quot;      &quot;titulo&quot;    &quot;ano&quot;       &quot;autor&quot;     &quot;tema&quot;      &quot;lido&quot;     
+## [7] &quot;cor&quot;       &quot;serie&quot;     &quot;numeracao&quot;</code></pre>
+<p>A data guarda o começo do processo de leitura. Estou lendo os artigos desde 2018-10-05 até 2020-05-17 com a pandemia dificultando o meu ritmo de leitura.</p>
+<p>A maioria dos artigos que eu li são recentes, sendo publicados desde 2010.</p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(artigos, aes(x = ano)) +
+  geom_density() +
+  labs(x = &quot;Ano&quot;, y = &quot;Densidade&quot;, title = &quot;Artigos lidos por ano de publicação do artigo&quot;) +
+  theme_bw()</code></pre>
+<pre><code>## Warning: Removed 7 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="/blog/2020-05-22-avaliacao-google-sheets_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Ainda há muitos artigos antigos o que atrapalha a escala da visualização. O artigo mais antigos é <code>artigos$titulo[artigos$ano == min(artigos$ano, na.rm = TRUE) &amp; !is.na(artigos$ano)]</code> de Immanuel Kant.</p>
+<p>Deixando apenas artigos publicados desde 2000 pode-se ver que existe um pico por volta de 2016.</p>
+<pre class="r"><code>ggplot(artigos[artigos$ano &gt;2000,], aes(x = ano)) +
+  geom_density() +
+  labs(x = &quot;Ano&quot;, y = &quot;Densidade&quot;, title = &quot;Artigos lidos por ano de publicação do artigo desde 2000&quot;) +
+  theme_bw()</code></pre>
+<pre><code>## Warning: Removed 7 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="/blog/2020-05-22-avaliacao-google-sheets_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Por fim queria avaliar de que anos especificos eram os artigos que eu li. Primeiro precisei limpar os dados. A limpeza foi realizada com o código abaixo e o principal objetivo desta foi agrupar os anos em um fator e reduzir o possível número de resultados para que se pudesse avaliar a visualização.</p>
+<pre class="r"><code>artigos$ano_fator &lt;- forcats::fct_lump_min(as.factor(artigos$ano), min = 20, other_level = &quot;Outros Anos&quot;)
+
+artigos$ano_fator &lt;- factor(artigos$ano_fator, levels = names(sort(table(artigos$ano_fator))))</code></pre>
+<p>Finalmente, pode-se observar quais os anos que produziram mais artigos que eu li.</p>
+<pre class="r"><code>ggplot(artigos, aes(x = ano_fator)) +
+  geom_bar() +
+  coord_flip() + 
+  labs(x = &quot;Ano&quot;, title = &quot;Artigos lidos por ano&quot;) +
+  theme_bw()</code></pre>
+<p><img src="/blog/2020-05-22-avaliacao-google-sheets_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="conclusão" class="section level2">
+<h2>Conclusão</h2>
+<p>O pacote <em>googlesheets4</em> permite trazer o poder de avaliação do R a planilhas pessoais o que permite algumas descobertas, a maioria divertidas e trivais. Possivelmente é possível obter descobertas mais interessantes de planilhas pessoais. Além disso é possível acessar documentos não pessoais o que também é interessante.</p>
+</div>
