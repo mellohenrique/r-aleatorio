@@ -1,0 +1,59 @@
+---
+title: "Criação de pacote em R, parte 2: Testes"
+author: Henrique de Mello de Assunção
+date: '2020-07-03'
+thumbnail:
+categories:
+  - R
+tags:
+  - R
+  - Simulação
+  - Reprodutibilidade
+---
+
+# Testes
+
+Essa é a segunda parte de uma série que estou escrevendo sobre escrever pacotes no R. Nesta parte vou usar o pacote [_tinytest_](https://github.com/markvanderloo/tinytest) para os exemplos. O exemplo usado nesta postagem é a versão traduzida do exemplo usado no site do github do pacote.
+
+A minha principal surpresa quando comecei a escrever um pacote foi a importância de testes na produção de um pacote. É incrível a quantidade de vezes que alguma alteração ou boa ideia no decorrer de um projeto acaba estragando vários partes anteriores do mesmo projeto. Quando isso ocorre começa um trabalho investigativo para se descobrir o que está acontecendo de errado. Essa situação pode ser simples de ser resolvida, mas muitas vezes não é.
+
+A solução para este problema, e outros é a construção de testes automatizados durante o processo de escrita do pacote.
+
+## Testes automatizados no R
+
+A construção de testes automáticos no R é a construção de um _script_ com várias proposições lógicas a serem avaliadas pelo computador. A ideia é que se tudo está certo todas as proposições vão dão dar uma valor previamente estabelecido normalmente `r TRUE`. Caso alguma proposiçao dê o valor incorreto o teste falha e você sabe a razão da falha.
+
+Com isso pode-se escrever muitos testes e se realizar vários testes ao longo do processo de construção do pacote de modo que, ao se alterar algo que cause um erro, possa-se se saber prontamente que causou um erro, de que modo causou um erro e o que fazer para corrigi-lo.
+
+Isso é **extremamente importante** e meu maior arrependimento ao escrever um pacote foi não começar a escrever testes durante o processo de testagem.
+
+## Outros benefícios
+
+Outro benefício de se escrever testes é estudar melhor o que se está escrevendo. Esse processo reflexivo faz com que se entenda melhor o código e o que está acontecendo. Isso auxilia no desenvolvimento do projeto.
+
+Uma outra vantagem é a felicidade de se ver todos o seu projeto passando em todos os teste escritos. É uma grande alegria em alguns momentos e um pequeno incentivo em outros.
+
+## Exemplo de teste
+
+Um exemplo de teste em R pode ser visto abaixo. Cria-se duas funções simples, a primeira está correta enquanto a segunda está incorreta. O script apresenta dois testes simples em que se escreve o resultado esperado da função dado um parâmetro.
+
+```{r}
+adiciona_um <- function(x) x + 1
+subtrai_um <- function(x) x - 2
+
+# this test should pass
+tinytest::expect_equal(adiciona_um(1), 2 )
+
+# this test will fail
+tinytest::expect_equal(subtrai_um(2), 1 ) 
+```
+
+Como era esperado a primeira função mostra que o teste foi bem sucedido enquanto a segunda apresenta uma falha. O exemplo é trivial, e completamente copiado do site do pacote [_tinytest_](https://github.com/markvanderloo/tinytest), mas em funções mais complicadas e maiores os testes se mostram ainda mais importantes devido a dificuldade de se abstrair todas as operações.
+
+## Pacotes para testes
+
+Eu conheço três pacotes para testes em R, que são:
+* [_tinytest_](https://github.com/markvanderloo/tinytest);
+* [_tinytest_](https://testthat.r-lib.org/);
+* [_tinytit_](https://github.com/yihui/testit).
+
