@@ -16,30 +16,33 @@ tags:
 <div id="testes" class="section level1">
 <h1>Testes</h1>
 <p>Essa é a segunda parte de uma série que estou escrevendo sobre escrever pacotes no R. Nesta parte vou usar o pacote <a href="https://github.com/markvanderloo/tinytest"><em>tinytest</em></a> para os exemplos. O exemplo usado nesta postagem é a versão traduzida do exemplo usado no site do github do pacote.</p>
-<p>A minha principal surpresa quando comecei a escrever um pacote foi a importância de testes na produção de um pacote. É incrível a quantidade de vezes que alguma alteração ou boa ideia no decorrer de um projeto acaba estragando vários partes anteriores do mesmo projeto. Quando isso ocorre começa um trabalho investigativo para se descobrir o que está acontecendo de errado. Essa situação pode ser simples de ser resolvida, mas muitas vezes não é.</p>
-<p>A solução para este problema, e outros é a construção de testes automatizados durante o processo de escrita do pacote.</p>
+<p>A minha principal surpresa quando comecei a escrever um pacote foi a importância de testes na produção de um pacote. É incrível a quantidade de vezes que alguma alteração ou boa ideia no decorrer de um projeto acaba estragando vários partes anteriores do mesmo projeto. Quando isso ocorre começa um trabalho investigativo para se descobrir o que está acontecendo de errado. Essa situação pode ser simples ou muito complicada, atrapalhando bastante a diversão de se construir um pacote.</p>
+<p>Uma solução para este problema, e outros é a construção de testes automatizados durante o processo de escrita do pacote. Estes testes permitem construir vários cenários idealizados de funcionamento correto do pacote e simplificar os casos de falhas, tornando o processo investigativo descrito anteriormente focado nos problemas revelados pelos testes.</p>
 <div id="testes-automatizados-no-r" class="section level2">
 <h2>Testes automatizados no R</h2>
-<p>A construção de testes automáticos no R é a construção de um <em>script</em> com várias proposições lógicas a serem avaliadas pelo computador. A ideia é que se tudo está certo todas as proposições vão dão dar uma valor previamente estabelecido normalmente TRUE. Caso alguma proposiçao dê o valor incorreto o teste falha e você sabe a razão da falha.</p>
-<p>Com isso pode-se escrever muitos testes e se realizar vários testes ao longo do processo de construção do pacote de modo que, ao se alterar algo que cause um erro, possa-se se saber prontamente que causou um erro, de que modo causou um erro e o que fazer para corrigi-lo.</p>
-<p>Isso é <strong>extremamente importante</strong> e meu maior arrependimento ao escrever um pacote foi não começar a escrever testes durante o processo de testagem.</p>
+<p>A construção de testes automáticos no R é a construção de um <em>script</em> com várias proposições lógicas a serem avaliadas pelo computador. A ideia é que se tudo está certo todas as proposições vão dão dar uma valor previamente estabelecido normalmente TRUE. Caso alguma proposiçao dê o valor incorreto o teste falha e você sabe a razão da falha, ou pelo menos a situação específica que não está mais funcionando.</p>
+<blockquote>
+<p>Uma ideia de se imaginar isso é considerar como se você estivesse escrevendo um livro. Os testes dizem se o capítulo que você está escrevendo fazem sentido com os capítulos ja escritos.</p>
+</blockquote>
+<p>Com isso pode-se escrever muitos testes e se realiza-los ao longo do processo de escrita do pacote. Com isso, toda vez que se roda os testes pode-se saber se alguma coisa <em>quebrou</em> ao longo do caminho, entender o problema e começar o processo de conserto com uma ideia bem mais clara do que aconteceu de errado.</p>
+<p>Isso é <strong>extremamente importante</strong> e meu maior arrependimento ao escrever um pacote foi não começar a escrever testes durante o processo de testagem. É mais fácil se construir testes durante o processo do que retornar, dias, semanas ou meses depois e ir escrevendo testes de funções que não estão mais <em>frescas</em>.</p>
 </div>
 <div id="outros-benefícios" class="section level2">
 <h2>Outros benefícios</h2>
-<p>Outro benefício de se escrever testes é estudar melhor o que se está escrevendo. Esse processo reflexivo faz com que se entenda melhor o código e o que está acontecendo. Isso auxilia no desenvolvimento do projeto.</p>
-<p>Uma outra vantagem é a felicidade de se ver todos o seu projeto passando em todos os teste escritos. É uma grande alegria em alguns momentos e um pequeno incentivo em outros.</p>
+<p>Outro benefício de se escrever testes é estudar melhor o que se está escrevendo. Esse processo reflexivo faz com que se entenda melhor o código, o que ele deveria fazer, qual são possíveis cenários de falha. Isso auxilia no desenvolvimento do projeto.</p>
+<p>Uma outra vantagem é a felicidade de se ver todos o seu projeto passando em todos os teste escritos. É uma grande alegria em alguns momentos e um pequeno incentivo em outros. Essa alegria pode ser a diferença em se terminar um processo.</p>
 </div>
 <div id="exemplo-de-teste" class="section level2">
 <h2>Exemplo de teste</h2>
-<p>Um exemplo de teste em R pode ser visto abaixo. Cria-se duas funções simples, a primeira está correta enquanto a segunda está incorreta. O script apresenta dois testes simples em que se escreve o resultado esperado da função dado um parâmetro.</p>
+<p>Um exemplo de teste em R pode ser visto abaixo. Cria-se duas funções simples, a primeira está correta enquanto a segunda está incorreta. A primeira é para adicionar um a um valor númerico dado e a segunda supostamente subtrairia-se um a um valor númerico dado, porém está subtraindo dois. O script apresenta dois testes simples em que se escreve o resultado esperado da função dado um parâmetro.</p>
 <pre class="r"><code>adiciona_um &lt;- function(x) x + 1
 subtrai_um &lt;- function(x) x - 2
 
-# this test should pass
+#  Esse teste vai passar
 tinytest::expect_equal(adiciona_um(1), 2 )</code></pre>
 <pre><code>## ----- PASSED      : &lt;--&gt;
 ##  call| tinytest::expect_equal(adiciona_um(1), 2)</code></pre>
-<pre class="r"><code># this test will fail
+<pre class="r"><code># Esse teste vai falhar
 tinytest::expect_equal(subtrai_um(2), 1 ) </code></pre>
 <pre><code>## ----- FAILED[data]: &lt;--&gt;
 ##  call| tinytest::expect_equal(subtrai_um(2), 1)
@@ -48,9 +51,11 @@ tinytest::expect_equal(subtrai_um(2), 1 ) </code></pre>
 </div>
 <div id="pacotes-para-testes" class="section level2">
 <h2>Pacotes para testes</h2>
-<p>Eu conheço três pacotes para testes em R, que são:
-* <a href="https://github.com/markvanderloo/tinytest"><em>tinytest</em></a>;
-* <a href="https://testthat.r-lib.org/"><em>tinytest</em></a>;
-* <a href="https://github.com/yihui/testit"><em>tinytit</em></a>.</p>
+<p>Eu conheço três pacotes para testes em R, que são:</p>
+<ul>
+<li><a href="https://github.com/markvanderloo/tinytest"><em>tinytest</em></a>;</li>
+<li><a href="https://testthat.r-lib.org/"><em>tinytest</em></a>;</li>
+<li><a href="https://github.com/yihui/testit"><em>tinytit</em></a>.</li>
+</ul>
 </div>
 </div>
