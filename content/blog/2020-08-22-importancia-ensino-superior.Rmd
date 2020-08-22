@@ -1,0 +1,57 @@
+---
+title: "Importância do ensino superior na renda do trabalho"
+author: Henrique de Mello Santos de Assunção
+date: '2020-08-22'
+thumbnail:
+categories:
+  - Brasil
+tags:
+  - Educação
+  - Demografia
+  - Trabalho
+---
+A Pesquisa Nacional por Amostra em Domicílio (PNAD) é uma importânte pesquisa para o Brasil gerando dados importantes da população, do rendimento e do trabalho. Esta pesquisa é realizada pelo Instituto Brasileiro de Geografia e Estatística (IBGE) e pode ser acessada no endereço eletrônico da insituição. A PNAD é uma pesquisa muito interessante que permite avaliar hipóteses e questões sobre a população brasileira, testar ideias e entender a relevância destas.
+
+Uma ideia que tenho é que o ensino superior é muito importante para o rendimento do trabalho no Brasil, ou seja, que o salto de rendimento entre trabalhos de pessoas com ensino superior e aqueles com ensino superior incompleto ou ensino médio completo é muito grande. De modo a testar esta hipótese utilizei os dados da pnad por meio do pacote [PNADcIBGE](https://cran.r-project.org/web/packages/PNADcIBGE/readme/README.html).
+
+As variáveis que utilizei para fazer este teste foram:
+
+* UF: Unidade da Federação;
+* V1028: Peso do domicílio e das pessoas;
+* VD3004: Nível de instrução mais elevado alcançado (pessoas de 5 anos ou mais de idade) padronizado para o Ensino fundamental -  SISTEMA DE 9 ANOS;
+* VD4002: Condição de ocupação na semana de referência para pessoas de 14 anos ou mais de idade;
+* VD4016: Rendimento mensal habitual do trabalho principal para pessoas de 14 anos ou mais de idade (apenas para pessoas que receberam em dinheiro, produtos ou mercadorias no trabalho principal).
+
+A ideia é utilizar o R para calcular o qual a média de rendimento do trabalho principal por nível de ensino para cada Unidade da Federação. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(PNADcIBGE)
+
+pnad_2020 <- get_pnadc(2020, quarter = 1, design = FALSE)
+
+dados_rendimento <- pnad_2020 %>% 
+  filter(VD4002 == "Pessoas ocupadas") %>% 
+  group_by(UF, VD3004) %>% 
+  summarise(rendimento = weighted.mean(VD4016, wt = V1028, na.rm = TRUE))
+
+```
+
+```{r results = "asis"}
+dados_rendimento %>% 
+  ggplot(aes(x = VD3004, y= rendimento
+  )) +
+  geom_col()+
+  facet_wrap(~UF) +
+  coord_flip() +
+  labs(x = "Nível educacional", y = 'Rendimento Efetivo do trabalho principal') +
+  theme_bw()
+
+```
+
+O gráfico acima mostra que existe uma diferença grande entre os trabalhadores que tinham ensino superior e aqueles que não tinham ensino superior. Essa diferença mostra que existe um grande retorno por se obter um ensino superior e isto faz parte do conjunto de características que fazem o Brasil ter um altissímo nível de desigualdade.
