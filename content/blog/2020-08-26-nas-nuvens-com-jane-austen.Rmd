@@ -28,7 +28,7 @@ nuvem_de_palavras <- function(livro){
     dplyr::count(word)  %>%
     dplyr::rename(freq = n) %>%
     dplyr::arrange(desc(freq)) %>%
-    dplyr::top_n(n = 120, wt = freq) %>% 
+    dplyr::top_n(n = 250, wt = freq) %>% 
     wordcloud2::wordcloud2()
 }
 
