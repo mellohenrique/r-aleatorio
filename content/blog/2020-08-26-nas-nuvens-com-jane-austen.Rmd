@@ -1,0 +1,71 @@
+---
+title: "Nas nuvens com Jane Austen"
+author: Henrique de Mello Santos de Assunção
+date: '2020-08-26'
+thumbnail:
+categories:
+  - Literatura
+tags:
+  - Amor
+  - Jane Austen
+  - Avaliação de texto
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(magrittr)
+```
+
+Faz tempo que não trabalho com avaliação computacional de texto. Por causa disto resolvi fazer um exercício simples de criação de 5 nuvens de palavras dos 5 romances completos de Jane Austen. Para isso construi uma pequena função para fazer nuvens de palavras.
+
+```{r, results='asis'}
+nuvem_de_palavras <- function(livro){
+  data.frame(txt = livro) %>% 
+    tidytext::unnest_tokens(word, txt) %>%
+    dplyr::anti_join(tidytext::stop_words) %>% 
+    dplyr::count(word)  %>%
+    dplyr::rename(freq = n) %>%
+    dplyr::arrange(desc(freq)) %>%
+    wordcloud2::wordcloud2()
+}
+
+```
+
+Espero que seja divertido observar as palavras mais usadas por uma escritora tão querida. 
+
+# Razão e Sensibilidade
+
+```{r, results='asis'}
+nuvem_de_palavras(janeaustenr::sensesensibility)
+```
+
+# Orgulho e Preconceito
+
+```{r, results='asis'}
+nuvem_de_palavras(janeaustenr::prideprejudice)
+```
+
+# Emma
+
+```{r, results='asis'}
+nuvem_de_palavras(janeaustenr::emma)
+```
+
+# Abádia Northanger
+```{r, results='asis'}
+nuvem_de_palavras(janeaustenr::northangerabbey)
+```
+
+# Persuasão
+```{r, results='asis'}
+nuvem_de_palavras(janeaustenr::persuasion)
+```
+
+# Pacotes usados
+
+* [janeaustenr](https://github.com/juliasilge/janeaustenr)
+* [tidytext](https://github.com/juliasilge/tidytext)
+* [dplyr](https://github.com/tidyverse/dplyr)
+* [wordcloud2](https://github.com/Lchiffon/wordcloud2)
+

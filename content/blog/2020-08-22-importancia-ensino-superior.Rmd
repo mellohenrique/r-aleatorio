@@ -25,7 +25,7 @@ As variáveis que utilizei para fazer este teste foram:
 A ideia é utilizar o R para calcular o qual a média de rendimento do trabalho principal por nível de ensino para cada Unidade da Federação. 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
 ```
 
 
@@ -38,7 +38,9 @@ pnad_2020 <- get_pnadc(2020, quarter = 1, design = FALSE)
 dados_rendimento <- pnad_2020 %>% 
   filter(VD4002 == "Pessoas ocupadas") %>% 
   group_by(UF, VD3004) %>% 
-  summarise(rendimento = weighted.mean(VD4016, wt = V1028, na.rm = TRUE))
+  summarise(rendimento = weighted.mean(VD4016, wt = V1028, na.rm = TRUE)) %>% 
+  mutate(VD3004 = str_remove_all(VD3004, "ou equilvaente|Sem instrução e ") %>% 
+           str_trim() %>% str_to_title())
 
 ```
 
