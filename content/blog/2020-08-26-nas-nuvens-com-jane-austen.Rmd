@@ -28,8 +28,8 @@ nuvem_de_palavras <- function(livro){
     dplyr::count(word)  %>%
     dplyr::rename(freq = n) %>%
     dplyr::arrange(desc(freq)) %>%
-    dplyr::top_n(n = 250, wt = freq) %>% 
-    wordcloud2::wordcloud2()
+    dplyr::filter(freq >= 10) %>% 
+    wordcloud2::wordcloud2(size = .8)
 }
 
 ```
@@ -46,6 +46,10 @@ nuvem_de_palavras(janeaustenr::sensesensibility)
 
 ```{r, results='asis'}
 nuvem_de_palavras(janeaustenr::prideprejudice)
+```
+# Mansfield Park
+```{r}
+nuvem_de_palavras(janeaustenr::mansfieldpark)
 ```
 
 # Emma
