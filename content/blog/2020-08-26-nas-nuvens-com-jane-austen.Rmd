@@ -12,14 +12,15 @@ tags:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 
-library(magrittr)
 ```
 
 Faz tempo que não trabalho com avaliação computacional de texto. Por causa disto resolvi fazer um exercício simples de criação de 5 nuvens de palavras dos 5 romances completos de Jane Austen. Para isso construi uma pequena função para fazer nuvens de palavras.
 
-```{r, results='asis'}
+```{r}
+library(magrittr)
+
 nuvem_de_palavras <- function(livro){
   data.frame(txt = livro) %>% 
     tidytext::unnest_tokens(word, txt) %>%
@@ -27,6 +28,7 @@ nuvem_de_palavras <- function(livro){
     dplyr::count(word)  %>%
     dplyr::rename(freq = n) %>%
     dplyr::arrange(desc(freq)) %>%
+    dplyr::top_n(n = 120, wt = freq) %>% 
     wordcloud2::wordcloud2()
 }
 
