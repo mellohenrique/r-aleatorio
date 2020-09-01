@@ -21,7 +21,7 @@ Faz tempo que não trabalho com avaliação computacional de texto. Por causa di
 ```{r}
 library(magrittr)
 
-nuvem_de_palavras <- function(livro){
+nuvem_de_palavras <- function(livro, tamanho = 1){
   data.frame(txt = livro) %>% 
     tidytext::unnest_tokens(word, txt) %>%
     dplyr::anti_join(tidytext::stop_words) %>% 
@@ -29,7 +29,7 @@ nuvem_de_palavras <- function(livro){
     dplyr::rename(freq = n) %>%
     dplyr::arrange(desc(freq)) %>%
     dplyr::filter(freq >= 10) %>% 
-    wordcloud2::wordcloud2(size = .8)
+    wordcloud2::wordcloud2(size = tamanho)
 }
 
 ```
@@ -44,8 +44,9 @@ nuvem_de_palavras(janeaustenr::sensesensibility)
 
 # Orgulho e Preconceito
 
+Nem sempre a palavra _Elisabeth_ aparece. 
 ```{r, results='asis'}
-nuvem_de_palavras(janeaustenr::prideprejudice)
+nuvem_de_palavras(janeaustenr::prideprejudice, tamanho = 0.6)
 ```
 # Mansfield Park
 ```{r}
