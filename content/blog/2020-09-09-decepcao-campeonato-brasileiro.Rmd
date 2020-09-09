@@ -1,0 +1,76 @@
+---
+title: "Decepção Colorada"
+author: Henrique de Mello Santos de Assunção
+date: '2020-09-09'
+thumbnail:
+categories:
+  - Brasil
+tags:
+  - Futebol
+  - InternacionalSC
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Decepção
+
+Essa é a primeira parte de um projeto para avaliar a decepção no campeonato brasileiro.
+
+Todo ano o Internacional desponta como um dos melhores times no começo da temporada e aparece na primeira posição do campeaonato brasileiro. Na temporada em que o Inter foi rebaixado ele foi o primeiro colocado por um período. Acho que foi a primeira vez na era dos pontos corridos que um time rebaixado foi primeiro colocado após 5 rodadas. Eu nunca vi o Internacional ser campeão brasileiro, o último campeanato foi em 1979, porém sistematicamente sou enganado no _agora vai_.
+
+Minha pergunta então se tornou. Será o Internacional o clube mais decepcionante no campeonato brasileiro. Vejo algumas métricas para responder isso:
+
+* Maior queda da posição mais alta atingida;
+* Maior queda média da posição mais alta atingida no final do campeonato;
+* Mais rodadas na primeira colocação sem título;
+
+O objetivo deste projeto é responder estas perguntas. Para isto vou utilizar os dados do [open footbal](https://github.com/openfootball/brazil).
+
+A ideia é criar uma tabela com dados de todas as rodadas do brasileirao disponíveis no site da open football e responder as perguntas anteriores. Para isso utilizou-se o pacote 
+
+```{r}
+library(stringr)
+
+texto_bruto <- readLines("https://raw.githubusercontent.com/openfootball/brazil/master/2011/brasileirao-seriea.txt", encoding = "UTF-8")
+
+
+numero_rodada <- as.numeric(str_remove(str_extract(texto_bruto, "Rodada [0-9]+"), "Rodada "))
+datas <- str_extract(texto_bruto, "[:alpha:]{3} [0-9]{2}\\/[0-9]{2}") 
+
+resultados <- str_extract(texto_bruto, "[:digit:] - [:digit:]")
+
+rodada <- str_trim(str_remove(str_extract(texto_bruto, "\t.+") , "\t"))
+
+casa <- str_trim(str_remove(str_extract(rodada, "^.+[:digit:]"), "[:digit:] - [:digit:]"))
+visitante <- str_trim(str_remove(str_extract(rodada, "[:digit:].+$"), "[:digit:] - [:digit:]"))
+
+gols_casa <- as.integer(str_extract(resultados, "^[0-9]"))
+gols_visitante <- as.integer(str_extract(resultados, "[0-9]$"))
+
+brasileirao <- data.frame(rodada = numero_rodada,
+                          data = datas,
+                          casa = casa,
+                          visitante = visitante,
+                          gols_casa = gols_casa,
+                          gols_visitante = gols_visitante)
+
+brasileirao <- tidyr::fill(brasileirao, rodada, data)
+
+brasileirao <- brasileirao[!is.na(brasileirao$casa),]
+```
+
+
+```{r results="asis"}
+
+kableExtra::kable_styling(
+  kableExtra::kable(head(brasileirao)),
+  c("striped", "hover"))
+```
+
+# Pacotes usados
+
+* [kableExtra](https://haozhu233.github.io/kableExtra/)
+* [stringr](https://stringr.tidyverse.org/)
