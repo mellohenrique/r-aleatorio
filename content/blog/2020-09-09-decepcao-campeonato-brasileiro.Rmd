@@ -8,7 +8,6 @@ categories:
 tags:
   - Futebol
   - InternacionalSC
-  
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +23,7 @@ Todo ano o Internacional desponta como um dos melhores times no começo da tempo
 Minha pergunta então se tornou. Será o Internacional o clube mais decepcionante no campeonato brasileiro. Vejo algumas métricas para responder isso:
 
 * Maior queda da posição mais alta atingida;
-* Maior queda média da posição mais alta atingida no final do campeonato;
+* Maior queda média da posição mais alta atingida nos brasileirões;
 * Mais rodadas na primeira colocação sem título;
 
 O objetivo deste projeto é responder estas perguntas. Para isto vou utilizar os dados do [open footbal](https://github.com/openfootball/brazil).

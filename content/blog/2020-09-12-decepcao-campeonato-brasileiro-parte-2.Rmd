@@ -1,0 +1,153 @@
+---
+title: "Decepção Colorada, parte 2"
+author: Henrique de Mello Santos de Assunção
+date: '2020-09-12'
+thumbnail:
+categories:
+  - Brasil
+tags:
+  - Futebol
+  - InternacionalSC
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Decepção parte 2
+
+Este post é uma sequência da postagem anterior sobre o campeaonato brasileiro, com o intuito de responder as seguinte pergunta, qual o time que gerou mais decepção para a torcida. Decepção está sendo tomado como expectativas frutradas em relação ao título ou a maior posiçaõ no próprio campeonato. As métricas que buscam ser respondidas são:
+
+* Maior queda da posição mais alta atingida;
+* Maior queda média da posição mais alta atingida nos brasileirões;
+* Mais rodadas na primeira colocação sem título;
+
+O primeiro post era sobre carregar os dados do site [open footbal](https://github.com/openfootball/brazil). Este é sobre estruturas o código de modo a tornar mais eficiente o processo.
+
+## Replicação
+
+O primeiro ponto que deve ser observado é que não será carregado apenas um campeonato brasileiro mas vários. Logo é interessante que não tenhamos que carregar os dados e limpar todas as vezes mas automatizar este processo para que ele seja replicado para todos os anos do brasileiro disponíveis no site.
+
+Sendo assim foi criada uma função com o objetivo de carregar os dados e criar uma limpeza inicial deste.
+
+```{r}
+# Carregando pacotes
+library(stringr)
+library(data.table)
+```
+
+
+```{r funcao}
+carrega_open_footbal <- function(url, produto_dt = TRUE) {
+  
+  dados_brutos = readLines(url, encoding = "UTF-8")
+  
+  numero_rodada = as.numeric(str_remove(str_extract(dados_brutos, "Rodada [0-9]+"), "Rodada "))
+  datas = str_extract(dados_brutos, "[:alpha:]{3} [0-9]{2}\\/[0-9]{2}") 
+  
+  resultados = str_extract(dados_brutos, "[:digit:] - [:digit:]")
+  
+  rodada = str_trim(str_remove(str_extract(dados_brutos, "\t.+") , "\t"))
+  
+  casa = str_trim(str_remove(str_extract(rodada, "^.+[:digit:]"), "[:digit:] - [:digit:]"))
+  visitante = str_trim(str_remove(str_extract(rodada, "[:digit:].+$"), "[:digit:] - [:digit:]"))
+  
+  gols_casa = as.integer(str_extract(resultados, "^[0-9]"))
+  gols_visitante = as.integer(str_extract(resultados, "[0-9]$"))
+  
+  dados = data.frame(rodada = numero_rodada,
+                            data = datas,
+                            casa = casa,
+                            visitante = visitante,
+                            gols_casa = gols_casa,
+                            gols_visitante = gols_visitante)
+  
+  dados = tidyr::fill(dados, rodada, data)
+  
+  dados = dados[!is.na(dados$casa),]
+  
+  if(produto_dt){
+    dados = as.data.table(dados)
+  } else {
+    dados
+  }
+}
+
+brasileirao <- carrega_open_footbal("https://raw.githubusercontent.com/openfootball/brazil/master/2011/brasileirao-seriea.txt", produto_dt = TRUE)
+```
+
+## Criando uma tabela histórica
+
+O objetivo deste estudo é entender o histórico das posições no campeaonato brasileiro e responder a questão se o Internacional é o clube que mais decepciona o seu torcedor segundo a métrica estabelecida. É necessário, então, limpar um pouco mais os dados obtidos de modo que eles apresentem dados do histórico do campeonato. Essa limpeza foi feita com o código abaixo:
+
+```{r limpeza, echo=FALSE}
+casa = brasileirao[, .(
+  time = casa,
+  vitoria = {gols_casa > gols_visitante},
+  empate = {gols_casa == gols_visitante},
+  derrota = {gols_casa < gols_visitante},
+  gols = gols_casa,
+  gols_sofridos = gols_visitante,
+  rodada = rodada
+)]
+
+casa[, `:=`(
+  pontos = ifelse(vitoria, 3, ifelse(empate, 1, 0)),
+  saldo = {gols - gols_sofridos}
+)]
+
+visitante = brasileirao[, .(
+  time = visitante,
+  vitoria = {gols_casa < gols_visitante},
+  empate = {gols_casa == gols_visitante},
+  derrota = {gols_casa > gols_visitante},
+  gols = gols_visitante,
+  gols_sofridos = gols_casa,
+  rodada = rodada
+)]
+
+visitante[, `:=`(
+  saldo =  {gols - gols_sofridos},
+  pontos = {ifelse(vitoria, 3, ifelse(empate, 1, 0))}
+)]
+
+todos_times <- rbind(casa, visitante)[, gols_totais := {gols_sofridos + gols}]
+
+```
+
+O código acima cria uma tabela com os resultados de cada rodada do campeonato brasileiro separado em duas tabelas, visitantes e _casa_. A linha final une as duas tabelas. O começo da tabela todos os times fica da seguinte forma fica da seguinte forma:
+
+```{r tabela_todos_times, results = "asis"}
+kableExtra::kable_styling(
+  kableExtra::kable(head(todos_times)),
+  c("striped", "hover"))
+```
+
+A tabela histórica é gerada fazendo um somatório acumulado das informações de gols, vitórias, derrotas, empates, saldo e pontos da tabela anterior
+
+```{r tabela_historica}
+tabela_historica <- todos_times[, lapply(.SD, cumsum), .SDcols = c("vitoria", "derrota", "empate", "pontos", "saldo", "gols", "gols_sofridos"), by = time][, `:=`(rodada = {vitoria + empate + derrota}), by = time]
+```
+
+A Tabela é uma tabela igual a que observamos em sites de esporte no final de cada rodada, porém com a infamação do final de todas as rodadas.
+
+```{r tabela_historica_demo, result = "asis"}
+kableExtra::kable_styling(
+  kableExtra::kable(head(tabela_historica)),
+  c("striped", "hover"))
+```
+
+```{r}
+kableExtra::kable_styling(
+  kableExtra::kable(tail(tabela_historica)),
+  c("striped", "hover"))
+```
+
+
+Agora é necessário aplicar este procedimento para os outros campeonatos e por fim calcular as métricas necessárias para responder as perguntas levantdas.
+
+# Pacotes usados
+
+* [kableExtra](https://haozhu233.github.io/kableExtra/)
+* [stringr](https://stringr.tidyverse.org/)
+* [data.table](https://github.com/Rdatatable/data.table)
