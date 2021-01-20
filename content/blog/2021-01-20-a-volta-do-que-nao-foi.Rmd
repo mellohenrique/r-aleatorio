@@ -1,0 +1,28 @@
+---
+title: "A volta do que não foi"
+author: Henrique de Mello Santos de Assunção
+date: '2021-01-20'
+thumbnail:
+categories:
+  - Blog
+tags:
+  - Reflexão
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Blog
+
+O blog foi uma aventura que eu comecei em julho de 2019. Era para ser um local para eu escrever meus pensamentos e fazer projetos de ciência de dados. Serveria como um portifólio, assim como um passatempo. Tive até um sonho de dividir artigos em diversos micro projetos diferentes que poderiam ser feitos aos poucos e depois combinados em algo maior.
+
+Infelizmente, como muitos projetos deste tipo, ele foi ficando para trás na minha lista de prioridades. Sem qualquer constância na produção de conteúdo e sem consistência nos conteúdos construídos. A vida foi acontecendo e esse pequeno projeto foi as moscas.
+
+Isso não quer dizer que eu tenha desistido. Tenho planos, megalomaniácos e insanos para esse projeto, ainda mais visto o estado de total _fracasso_ em que ele se encontra. Espero poder usa-lo ainda para muitas aventuras diferentes.
+
+Minha meta para o próximo ano é que ele tenha de 2 a 5 visitantes. E vou criar conteúdo semanal para tornar essa meta uma realidade.
+
+A vitória.
+
+> fortis fortununa adiuvati

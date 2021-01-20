@@ -8,3 +8,5 @@
 *_cache*
 .httr-oauth
 dados/
+"\\.knit\\.md$"
+"\\.utf8\\.md$"
