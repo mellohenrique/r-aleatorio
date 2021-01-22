@@ -48,4 +48,4 @@ tibble(resultados = replicate(2000000, max(sample(1:20, size =2, replace = TRUE)
 
 ## Conclusão
 
-Como esperado, os resultados da simulação divergem dos resultados matemáticos, porém esta divergência é mínima. A simulação não é uma ferramenta tão útil neste cenário, em que o resultado estatístico pode ser calculado facilmente, porém, em cenários em que a obtenção do resultado correto seja algo difícil, portanto aproxima-los com simulações é interessante.
+Como esperado, os resultados da simulação divergem dos resultados matemáticos, porém esta divergência é mínima. A simulação não é uma ferramenta tão útil neste cenário, em que o resultado estatístico pode ser calculado facilmente, porém, em cenários em que a obtenção do resultado correto seja algo difícil, aproxima-los com simulações é uma estratégia interessante de se obter uma estimativa razoável.

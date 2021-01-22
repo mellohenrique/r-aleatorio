@@ -1,13 +1,12 @@
 ---
 title: "Nomes do países do mundo"
 author: Henrique de Mello Santos de Assunção
-date: '2022-01-22'
+date: '2021-01-22'
 thumbnail:
 categories:
   - R
 tags:
   - Avaliação de texto
-
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +21,7 @@ O objetivo desta postagem é fazer um exercício divertido. Obter quais as palav
 
 Abaixo apresenta-se as palavras mais comuns utilizadas para nomes extensos de países. O resultado é divertido com a palavra república tendo uma importância absurda.
 
-```{r class.source = 'fold-hide'}
+```{r}
 # Carregando pacotes
 library(httr)
 library(tidyverse)
