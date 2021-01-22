@@ -1,0 +1,66 @@
+---
+title: "Nomes do países do mundo"
+author: Henrique de Mello Santos de Assunção
+date: '2022-01-22'
+thumbnail:
+categories:
+  - R
+tags:
+  - Avaliação de texto
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+O objetivo desta postagem é fazer um exercício divertido. Obter quais as palavras são mais utilizadas no nomes extensos dos países ao redor do mundo. Utiliza-se o CIA factbook para obter o nome dos países. O objetivo é fazer um exercício simples para depois utilizar o CIA factbook para exercícios mais intensos e possivelmente mais interessantes. Baseia-se muito em uma resposta do statexchange ["como obter a lista de arquivos de um reposítorio do github no R"](https://stackoverflow.com/questions/25485216/how-to-get-list-files-from-a-github-repository-folder-using-r").
+
+Abaixo apresenta-se as palavras mais comuns utilizadas para nomes extensos de países. O resultado é divertido com a palavra república tendo uma importância absurda.
+
+```{r}
+# Carregando pacotes
+library(httr)
+library(tidyverse)
+library(DT)
+library(tidytext)
+library(wordcloud2)
+
+# Obtendo estrutura do diretorio do API
+req <- GET("https://api.github.com/repos/factbook/factbook.json/git/trees/master?recursive=1")
+
+stop_for_status(req)
+
+filelist <- unlist(lapply(content(req)$tree, "[", "path"), use.names = F)
+
+# Definindo arquivos
+arquivos <- paste0("https://raw.githubusercontent.com/factbook/factbook.json/master/", filelist[stringr::str_detect(filelist, ".json$")])
+
+arquivos <- arquivos[!str_detect(arquivos, "package.json|antarctica|australia-oceania\\/at.json|central-america-n-caribbean\\/nn.json|central-america-n-caribbean\\/rn.json|central-america-n-caribbean\\/tb.json|east-n-southeast-asia\\/tw.json|europe\\/ax.json|europe\\/dx.json|europe\\/ee.json|europe\\/gk.json|meta\\/categories.json|middle-east\\/gz.json|oceans\\/oo.json|oceans\\/xo.json|oceans\\/xq.json|oceans\\/zh.json|oceans\\/zn.json|world\\/xx.json")]
+
+# Função para obter nomes dos paises
+le_nome <- function(arquivo){
+  jsonlite::read_json(arquivo)$Government$`Country name`$`conventional long form`$text
+}
+
+# Obtendo nomes dos arquivos
+nomes <- map_chr(arquivos, ~le_nome(.x))
+
+# Avaliacao
+paises <- tibble(pais = nomes)
+paises <-  unnest_tokens(paises, palavras, pais)
+paises <- paises[!paises$palavras %in% tidytext::stop_words$word, ]
+contagem <- count(paises, palavras, sort = TRUE) 
+contagem$freq <- contagem$n
+
+```
+
+
+```{r}
+datatable(contagem, options = list(pageLength = 10))
+```
+
+```{r}
+wordcloud2::wordcloud2(contagem)
+```
