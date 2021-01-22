@@ -7,10 +7,13 @@ categories:
   - R
 tags:
   - Avaliação de texto
+
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 ```
 
 ## R Markdown
@@ -19,7 +22,7 @@ O objetivo desta postagem é fazer um exercício divertido. Obter quais as palav
 
 Abaixo apresenta-se as palavras mais comuns utilizadas para nomes extensos de países. O resultado é divertido com a palavra república tendo uma importância absurda.
 
-```{r}
+```{r class.source = 'fold-hide'}
 # Carregando pacotes
 library(httr)
 library(tidyverse)
@@ -52,7 +55,8 @@ paises <- tibble(pais = nomes)
 paises <-  unnest_tokens(paises, palavras, pais)
 paises <- paises[!paises$palavras %in% tidytext::stop_words$word, ]
 contagem <- count(paises, palavras, sort = TRUE) 
-contagem$freq <- contagem$n
+contagem_wordcloud <- contagem
+contagem_wordcloud$freq <- contagem$n
 
 ```
 
@@ -61,6 +65,8 @@ contagem$freq <- contagem$n
 datatable(contagem, options = list(pageLength = 10))
 ```
 
+Eu removi a palavra república da nuvem de palavras porque ela deturpa demais a visualização que só está sendo adicionada para ser algo fofo na postagem.
+
 ```{r}
-wordcloud2::wordcloud2(contagem)
+wordcloud2::wordcloud2(contagem_wordcloud[-1,])
 ```
