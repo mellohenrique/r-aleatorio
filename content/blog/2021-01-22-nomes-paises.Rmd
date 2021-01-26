@@ -64,7 +64,7 @@ contagem_wordcloud$freq <- contagem$n
 datatable(contagem, options = list(pageLength = 10))
 ```
 
-Eu removi a palavra república da nuvem de palavras porque ela deturpa demais a visualização que só está sendo adicionada para ser algo fofo na postagem.
+Eu removi a palavra república da nuvem de palavras porque ela deturpa demais a visualização. A nuvem de palavras só está sendo adicionada para ser algo fofo na postagem.
 
 ```{r}
 wordcloud2::wordcloud2(contagem_wordcloud[-1,])

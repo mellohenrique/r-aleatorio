@@ -1,0 +1,73 @@
+---
+title: "Simulando o Fundeb"
+author: Henrique de Mello Santos de Assunção
+date: '2021-01-25'
+thumbnail:
+categories:
+  - R
+  - Educação
+tags:
+  - Política Educacional
+  - Simulação
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+
+# Carregando pacotes
+library(simulador.fundeb)
+library(tidyverse)
+library(ggridges)
+
+ma_2 <- simulador.fundeb::simular_modelo_fundeb(alunos_2015, ponderador = ponderador_alunos, base_financas = financas_2015, base_socioeconomica = socioeco_2015, complem_uniao = .2) %>% 
+  filter(estado == "MA")
+
+ma <- simulador.fundeb::simular_modelo_fundeb(alunos_2015, ponderador = ponderador_alunos, base_financas = financas_2015, base_socioeconomica = socioeco_2015, complem_uniao = .1) %>% 
+  filter(estado == "MA")
+
+rs <- simulador.fundeb::simular_modelo_hibrido_tempo(alunos_2015, ponderador = ponderador_alunos, base_financas = financas_2015, base_socioeconomica = socioeco_2015, complem_uniao = c(.1), equalizacao_socio = .5, crescimento_economico =c(.01, .01, .01, .02, .02), crescimento_demografico =c(0.02, 0, -.01, -.02, -.02)) %>% 
+  filter(estado == "RS")
+
+```
+
+
+Eu trabalhei com a organização [Todos pela Educação](https://todospelaeducacao.org.br/) em um projeto para simular os gastos com o Fundo Nacional de Desenvolvimento da Educação Básica e de Valorização dos Profissionais da Educação (Fundeb). O projeto teve os seguintes resultados:
+
+1. Pacote R para simulação do Fundeb; [simulador.fundeb](https://github.com/mellohenrique/simulador.fundeb);
+2. [Dashboard](https://simuladorfundeb.todospelaeducacao.org.br/) em que se pode usar o pacote interativamente.
+
+O pacote apresenta funções para simulação do modelo fundeb em três especificações (a antiga, uma com complementação ente a ente e um modelo híbrido), além de se poder extender a análise no tempo com diferentes especificações de crescimento demográfico e econômico.
+
+O objetivo do projeto é poder observar como o Fundeb funciona com diferentes especificações. Quanto é alterado o valor aluno ano[^1] dos municípios do maranhão caso o governo federal dobre o aporte utilizado para equalizar os fundos estaduais (usando o modelo antigo do Fundeb), ou qual a distribuição do valor aluno ano final entre os entes do Rio Grande do Sul caso haja um crescimento econômico de 1% nos 3 primeiros anos e 2% nos dois subsequentes e um crescimento demográfico positivo de 2% no primeiro ano, nulo no segundo e negativo de 1% no terceiro ano e 2% nos dois anos subsequesntes e considera-se um modelo híbrido?
+
+Os dois gráficos abaixo indicam respostas para estas questões. Observa-se que existe uma distribuição unimodal (distribuição com um pico) do valor aluno ano além de haver um grande desigualdade, com alguns entes recebendo valores de aluno ano muito distindos. Observa-se que o aumento da contribuição auxilia todos os municípios do Maranhão, inclusive os que recebem um valor alto de VAA, e que o crescimento econômico e diminuição do número de alunos aumenta o valor aluno ano dos municípios Gaúchos.
+
+```{r results='asis'}
+ma_2 %>% bind_rows(ma, .id = "modelo") %>% 
+  mutate(modelo = ifelse(modelo == 1, "Complementação de 20%\ndo valor do fundo pela União", "Complementação de 10%\ndo valor do fundo pela União")) %>% 
+  select(nome, modelo, vaa_final) %>% 
+  ggplot(aes(x = vaa_final, fill = modelo)) +
+  geom_density(alpha = 0.7) +
+  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
+  labs(x= "Valor Aluno Ano Final", y = "Densidade", title = "Valor Aluno Ano Final recebido pelo municípios Maranhanses em diferentes modelo", fill = "Modelo") +
+  theme_bw()
+```
+
+```{r  results='asis'}
+rs %>% 
+  select(ano, vaa_final) %>% 
+  ggplot(aes(x = vaa_final, fill = ano, y = ano)) +
+  geom_density_ridges(alpha = 0.7) +
+  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
+  labs(x= "Valor Aluno Ano Final", y = "Densidade", title = "Valor Aluno Ano Final recebido pelo municípios Gaúchos em diferentes anos", fill = "Ano") +
+  theme_bw()
+```
+
+
+[^1]: Valor aluno ano é o valor de dinheiro recebido para cada aluno por ano que ele cursa. Por exemplo, um aluno que cursa um semestre seria meio aluno ano.
+
+## Ponderações
+
+As perguntas apresentadas acima podem não ser perguntas interessantes. A questão é que este pacote é parte de um arsenal de ferramentas utilizados para avaliar o Fundeb, e embora as perguntas acima possam não ser interessantes, perguntas semelhantes a elas podem. E este pacote, e outras ferramentas, são instrumentos para se responder estas perguntas e se achar respostas para a construção de uma melhor educação.

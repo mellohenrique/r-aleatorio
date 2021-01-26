@@ -1,0 +1,35 @@
+---
+title: "Simulando o Fundeb"
+author: Henrique de Mello Santos de Assunção
+date: '2021-01-25'
+thumbnail:
+categories:
+  - R
+  - Educação
+tags:
+  - Política Educacional
+  - Simulação
+---
+
+
+
+<p>Eu trabalhei com a organização <a href="https://todospelaeducacao.org.br/">Todos pela Educação</a> em um projeto para simular os gastos com o Fundo Nacional de Desenvolvimento da Educação Básica e de Valorização dos Profissionais da Educação (Fundeb). O projeto teve os seguintes resultados:</p>
+<ol style="list-style-type: decimal">
+<li>Pacote R para simulação do Fundeb; <a href="https://github.com/mellohenrique/simulador.fundeb">simulador.fundeb</a>;</li>
+<li><a href="https://simuladorfundeb.todospelaeducacao.org.br/">Dashboard</a> em que se pode usar o pacote interativamente.</li>
+</ol>
+<p>O pacote apresenta funções para simulação do modelo fundeb em três especificações (a antiga, uma com complementação ente a ente e um modelo híbrido), além de se poder extender a análise no tempo com diferentes especificações de crescimento demográfico e econômico.</p>
+<p>O objetivo do projeto é poder observar como o Fundeb funciona com diferentes especificações. Quanto é alterado o valor aluno ano<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> dos municípios do maranhão caso o governo federal dobre o aporte utilizado para equalizar os fundos estaduais (usando o modelo antigo do Fundeb), ou qual a distribuição do valor aluno ano final entre os entes do Rio Grande do Sul caso haja um crescimento econômico de 1% nos 3 primeiros anos e 2% nos dois subsequentes e um crescimento demográfico positivo de 2% no primeiro ano, nulo no segundo e negativo de 1% no terceiro ano e 2% nos dois anos subsequesntes e considera-se um modelo híbrido?</p>
+<p>Os dois gráficos abaixo indicam respostas para estas questões. Observa-se que existe uma distribuição unimodal (distribuição com um pico) do valor aluno ano além de haver um grande desigualdade, com alguns entes recebendo valores de aluno ano muito distindos. Observa-se que o aumento da contribuição auxilia todos os municípios do Maranhão, inclusive os que recebem um valor alto de VAA, e que o crescimento econômico e diminuição do número de alunos aumenta o valor aluno ano dos municípios Gaúchos.</p>
+<p><img src="/blog/2021-01-25-simulando-fundeb_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/blog/2021-01-25-simulando-fundeb_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div id="ponderações" class="section level2">
+<h2>Ponderações</h2>
+<p>As perguntas apresentadas acima podem não ser perguntas interessantes. A questão é que este pacote é parte de um arsenal de ferramentas utilizados para avaliar o Fundeb, e embora as perguntas acima possam não ser interessantes, perguntas semelhantes a elas podem. E este pacote, e outras ferramentas, são instrumentos para se responder estas perguntas e se achar respostas para a construção de uma melhor educação.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Valor aluno ano é o valor de dinheiro recebido para cada aluno por ano que ele cursa. Por exemplo, um aluno que cursa um semestre seria meio aluno ano.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
