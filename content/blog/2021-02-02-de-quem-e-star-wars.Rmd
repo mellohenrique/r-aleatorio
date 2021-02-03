@@ -1,0 +1,44 @@
+---
+title: "De quem é Star Wars"
+author: Henrique de Mello Santos de Assunção
+date: '2021-02-02'
+thumbnail:
+categories:
+  - Cultura
+  - Economia
+tags:
+  - McCloskey
+  - Coase
+bibliography: [bibliografia.bib]
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+De quem é Star Wars? Quem decide a história de Luke Skywalker? A noção de que alguém é dono de uma história, ou de uma propriedade intelectual é algo normal para nossa sociedade, porém, é interessante ver como a ideia de que alguém pode ser dono de uma ideia interage com a economia, especificamente com o teorema de Coase. O teorema de Coase [@coase1960problem] é importante teorema na ciência economica. Uma forma de resumir o teorema é:
+
+> Se os custos de transação[^1] são nulos e os direitos de propriedade bem definidos a solução final (a alocação final) é Pareto-eficiente[^2] independente da alocação inicial de recursos.
+
+O teorema é em geral utilizado para debater-se sobre externalidade [^3]. O ponto é que caso os direitos de propriedade sejam bem definidos e não haja custo de transação os resultados finais são Pareto-eficiente, ou seja, não é possível melhorar a situação de nenhuma das partes sem prejudicar a situação de alguém.
+
+Segundo [@mccloskey1998so] a ideia de Coase era mostrar o quão absurdo seria imaginar um mundo sem custos de transação e com direitos de propriedade bem definidos. Em comunidades humanas com relações de interdependência e pessoas, não **meros** agentes maximizadores de utilidade, situações trivais apresentam direitos de propriedade mal-definidos e altos custos de transação. 
+
+Um caso interessante desse problema surgiu na continuação de uma saga muito querida para mim. As sequências de Star Wars foram filmes impactantes no cenário cultural nos últimos anos. Uma das principais empresas de entretenimento dando continuação a uma das principais histórias do século XX é um fenomeno e tanto.
+
+Os filmes acenderam intensas paixões na audiência. Parte do público apreciou enormemente os novos episódios da saga enquanto outra parte, não apreciou. São milhares de vídeos, milhares de postagens em blogs, milhões de mensagens de pessoas que defendem os filmes e de pessoas que detestam os filmes. 
+
+O meu ponto com esta narrativa é o seguinte. Existem direitos de propriedade razoavelmente bem definidos sobre algo abstrato, a legitimidade de se contar a história de guerra nas estrelas. E, é muito difícil fazer com que os milhões de fãs que se sentem donos da obra _negociem_ esses direitos. Além, os custos de transação de um objeto abstrato são incompreensíveis. O resultado final não é uma alocação pareto-eficiente, e, não é possível fazer trocas de mercado para tornar isso eficiente. 
+
+Não sei se é possível haver direitos de propriedades bem definidos para obras como Harry Potter, Senhor dos Áneis, Duna, Sandman ou Guerra nas Estrelas. Algumas obras parecem ter _transcendido_ esse ponto, justamente por não serem de ninguém, mas de um outro objeto abstrato, da humanidade, tais como a Ilíada. 
+
+Neste mundo de direitos de propriedades sobre abstrações, sobre sentimentos, é difícil imaginar trocas ou negociações sem custos de transação, que possam incorporar as externatlidades. Uma possível solução para isso é o universo das criações de fãs, exatemente por permitir que cada indivíduos crie sua própria história de histórias que parecem ser da humanidade, mas não são. Eles servem para tornar Guerra nas Estrelas como Ilíada, com milhares de fãs preenchendo as lacunas e se divertindo enquanto isso.
+
+[^1]: Os custos de transação são os custos são os custos de se fazer uma transação no mercado. É o custo de descer, ir na sorveteria, avaliar os preços dos sorvetes e decidir qual sorvete escolher. Grande parte dos custos de transação são abstratos, como planejamento e decisão.
+
+[^2]: Uma situação é Pareto-Eficiente quando não pode se melhorar a situação de nenhum dos participantes sem prejudicar alguém. Por exemplo, se Matheus e Flávia gostam de sorvete de limão e cada um deles tem um sorvete de limão, essa situação é pareto eficiente, pois para melhorar a situação de Matheus, ou Flávia, é necessário tirar o sorvete de um e dar para o outro.
+
+[^3]: Externalidades são custos ou benefícios impostos a uma terceira parte que não concordou com a situação que criou tais custos ou benefícios. Ser prejudicado pela fumaça de um fumante desconhecido ou ser beneficiado com ar puro de um jardim próximo em que a pessoa não paga ou cuida dele.
+
+# Referências

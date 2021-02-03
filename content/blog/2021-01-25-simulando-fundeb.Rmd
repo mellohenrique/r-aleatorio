@@ -40,7 +40,10 @@ Eu trabalhei com a organização [Todos pela Educação](https://todospelaeducac
 
 O pacote apresenta funções para simulação do modelo fundeb em três especificações (a antiga, uma com complementação ente a ente e um modelo híbrido), além de se poder extender a análise no tempo com diferentes especificações de crescimento demográfico e econômico.
 
-O objetivo do projeto é poder observar como o Fundeb funciona com diferentes especificações. Quanto é alterado o valor aluno ano[^1] dos municípios do maranhão caso o governo federal dobre o aporte utilizado para equalizar os fundos estaduais (usando o modelo antigo do Fundeb), ou qual a distribuição do valor aluno ano final entre os entes do Rio Grande do Sul caso haja um crescimento econômico de 1% nos 3 primeiros anos e 2% nos dois subsequentes e um crescimento demográfico positivo de 2% no primeiro ano, nulo no segundo e negativo de 1% no terceiro ano e 2% nos dois anos subsequesntes e considera-se um modelo híbrido?
+O objetivo do projeto é poder observar como o Fundeb funciona com diferentes especificações. Por exemplo, suponha as perguntas abaixo:
+
+1. Quanto é alterado o valor aluno ano[^1] dos municípios do maranhão caso o governo federal dobre o aporte utilizado para equalizar os fundos estaduais (usando o modelo antigo do Fundeb),
+2. Qual a distribuição do valor aluno ano final entre os entes do Rio Grande do Sul caso haja um crescimento econômico de 1% nos 3 primeiros anos e 2% nos dois subsequentes e um crescimento demográfico positivo de 2% no primeiro ano, nulo no segundo e negativo de 1% no terceiro ano e 2% nos dois anos subsequesntes e considera-se um modelo híbrido?
 
 Os dois gráficos abaixo indicam respostas para estas questões. Observa-se que existe uma distribuição unimodal (distribuição com um pico) do valor aluno ano além de haver um grande desigualdade, com alguns entes recebendo valores de aluno ano muito distindos. Observa-se que o aumento da contribuição auxilia todos os municípios do Maranhão, inclusive os que recebem um valor alto de VAA, e que o crescimento econômico e diminuição do número de alunos aumenta o valor aluno ano dos municípios Gaúchos.
 
