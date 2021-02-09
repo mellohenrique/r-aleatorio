@@ -1,0 +1,108 @@
+---
+title: "Desiguldade e Seguridade Social"
+author: Henrique de Mello Santos de Assunção
+date: '2021-02-04'
+output: bookdown::html_document2
+categories:
+  - Brasil
+  - Economia
+tags:
+  - Desigualdade
+bibliography: [bibliografia.bib]
+---
+
+
+
+<p>Há algum tempo atrás eu fiz um texto sobre a cobertura do sistema de segurança social do Brasil. Na época a principal conversa no Brasil era sobre a reforma da previdência que rondava as conversas e se mostrava como importante social, economica e narrativamente para o futuro do Brasil. O propósito da avaliação era observar a extensão da cobertura do sistema de segurança social nos diferentes estados brasileiros e dividindo para classificações demográficas relevantes.</p>
+<p>Utilizando dados do Instituto Brasileiro de Geografia e Estatística (IBGE) da Pesquisa Nacional por Amostra de Domicílio Contínua (PNADc) do quarto trimestre de 2019 foi avaliada a cobertura do sistema de proteção social para estados brasileiros, diferenças de sexo e de raça.</p>
+<div id="contribuições-para-o-sistema-de-segurança-nacional-no-brasil" class="section level2">
+<h2>Contribuições para o sistema de segurança nacional no Brasil</h2>
+<p>O Brasil tem um alto grau de desigualdade regional. As regiões Norte e Nordeste são consideravelmente mais pobres que as demais regiões brasileiras. Espera-se que com maior renda haja mais emprego formal e portanto mais contribuições pra o sistema de segurança nacional. Considerou-se nessa análise o Norte e Nordeste como <em>Norte</em> e os demais estados como <em>Sul</em>. Como pode ser observado no Gráfico <a href="#fig:grafuf">1</a>, a diferença regional é observada também na cobertura da segurança nacional com os estados do <em>Sul</em> apresentando maior cobertura dos que os estados do <em>Norte</em>.</p>
+<div class="figure"><span id="fig:grafuf"></span>
+<img src="/blog/2021-02-04-desigualdade-seguridade-social_files/figure-html/grafuf-1.png" alt="Contribuição para a Seguridade Social por Estado" width="672" />
+<p class="caption">
+Figure 1: Contribuição para a Seguridade Social por Estado
+</p>
+</div>
+<p>O Brasil apresentand alto grau de informalidade no mercado de trabalho. Os homens trabalham proporcionalmente mais que as mulheres no mercado de trabalho informal<span class="citation">(Ulyssea <a href="#ref-ulyssea2005informalidade" role="doc-biblioref">2005</a>)</span>, <span class="citation">(Corseuil, Reis, and Brito <a href="#ref-corseuil2015criterios" role="doc-biblioref">2015</a>)</span> e, portanto, espera-se que o percentual de homens que contribuem para o sistema de seguridade nacional seja menor. Como pode ser visto na Tabela <a href="#tab:sex">1</a> isso é observado no Brasil.</p>
+<table>
+<caption><span id="tab:sex">Table 1: </span>Proporção de contribuição ao sistema de seguridade social por sexo</caption>
+<thead>
+<tr class="header">
+<th align="left">Sexo</th>
+<th align="left">Proporção</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Homem</td>
+<td align="left">61.76%</td>
+</tr>
+<tr class="even">
+<td align="left">Mulher</td>
+<td align="left">64.16%</td>
+</tr>
+</tbody>
+</table>
+<p>A desigualdade brasileira encontra-se também em linhas raciais. A renda média das pessoas negras (pretas e pardas) é menor que a das brancas, sendo negros trabalham mais no setor informal. Esses fatos são refletidos na cobertura da seguridade social como descrita na Tabela <a href="#tab:race">2</a>, com negros tendo menor cobertura que brancos e amarelos. Isso mostra que negros são mais vulneráveis a circunstâncias que brancos e amarelos visto que não tem auxílio tão direto da rede de seguridade social.</p>
+<table>
+<caption><span id="tab:race">Table 2: </span>Proporção de contribuição ao sistema de seguridade social por raça</caption>
+<thead>
+<tr class="header">
+<th align="left">Raça</th>
+<th align="left">Proporção</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Branca</td>
+<td align="left">69.99%</td>
+</tr>
+<tr class="even">
+<td align="left">Preta</td>
+<td align="left">59.39%</td>
+</tr>
+<tr class="odd">
+<td align="left">Amarela</td>
+<td align="left">67.98%</td>
+</tr>
+<tr class="even">
+<td align="left">Parda</td>
+<td align="left">56.44%</td>
+</tr>
+<tr class="odd">
+<td align="left">Indígena</td>
+<td align="left">52.88%</td>
+</tr>
+<tr class="even">
+<td align="left">Ignorado</td>
+<td align="left">42.41%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="conclusão" class="section level2">
+<h2>Conclusão</h2>
+<p>Essa foi uma avaliação exploratória da cobertura da seguridade social em alguns eixos relevantes para o Brasil. O resultado relativo a sexo pode não ser esperado a primeira vista, porém, ao se observar a natureza do mercado de trabalho informal no Brasil este resultado não é estranho. Os outros resultados se encaixam bem com o senso comum da desigualdade brasileira.</p>
+</div>
+<div id="pacotes-usados" class="section level2">
+<h2>Pacotes usados</h2>
+<p>Os seguintes pacotes foram usados:</p>
+<ul>
+<li><a href="https://dplyr.tidyverse.org/">dplyr</a>;</li>
+<li><a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis</a>;</li>
+<li><a href="https://www.r-project.org/nosvn/pandoc/knitr.html">knitr</a>;</li>
+<li><a href="https://cran.r-project.org/web/packages/PNADcIBGE/readme/README.html">PNADcIBGE</a>;</li>
+</ul>
+</div>
+<div id="referências" class="section level2 unnumbered">
+<h2>Referências</h2>
+<div id="refs" class="references">
+<div id="ref-corseuil2015criterios">
+<p>Corseuil, Carlos Henrique, Mauricio Cortez Reis, and Alessandra Scalioni Brito. 2015. “Critérios de Classificação Para Ocupação Informal: Consequências Para a Caracterização Do Setor Informal E Para a análise de Bem-Estar No Brasil.” <em>Estudos Econômicos (São Paulo)</em> 45 (1): 5–31.</p>
+</div>
+<div id="ref-ulyssea2005informalidade">
+<p>Ulyssea, Gabriel. 2005. “Informalidade No Mercado de Trabalho Brasileiro: Uma Resenha Da Literatura.”</p>
+</div>
+</div>
+</div>

@@ -1,0 +1,100 @@
+---
+title: "Desiguldade e Seguridade Social"
+author: Henrique de Mello Santos de Assunção
+date: '2021-02-04'
+output: bookdown::html_document2
+categories:
+  - Brasil
+  - Economia
+tags:
+  - Desigualdade
+bibliography: [bibliografia.bib]
+---
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+# Carregando pacotes
+library(tidyverse)
+library(viridis)
+library(knitr)
+library(PNADcIBGE)
+
+data_pnad <- get_pnadc(vars = c("UF", "V1028", "V2007", "V2009", "V2010", "VD4001", "VD4002", "VD4012", "VD4020"), year = 2019, quarter = 4, design = FALSE)
+```
+
+Há algum tempo atrás eu fiz um texto sobre a cobertura do sistema de segurança social do Brasil. Na época a principal conversa no Brasil era sobre a reforma da previdência que rondava as conversas e se mostrava como importante social, economica e narrativamente para o futuro do Brasil. O propósito da avaliação era observar a extensão da cobertura do sistema de segurança social nos diferentes estados brasileiros e dividindo para classificações demográficas relevantes.
+
+Utilizando dados do Instituto Brasileiro de Geografia e Estatística (IBGE) da Pesquisa Nacional por Amostra de Domicílio Contínua (PNADc) do quarto trimestre de 2019 foi avaliada a cobertura do sistema de proteção social para estados brasileiros, diferenças de sexo e de raça.
+
+
+## Contribuições para o sistema de segurança nacional no Brasil
+
+O Brasil tem um alto grau de desigualdade regional. As regiões Norte e Nordeste são consideravelmente mais pobres que as demais regiões brasileiras. Espera-se que com maior renda haja mais emprego formal e portanto mais contribuições pra o sistema de segurança nacional. Considerou-se nessa análise o Norte e Nordeste como _Norte_ e os demais estados como _Sul_. Como pode ser observado no Gráfico \@ref(fig:grafuf), a diferença regional é observada também na cobertura da segurança nacional com os estados do _Sul_ apresentando maior cobertura dos que os estados do _Norte_.
+
+```{r grafuf, results='asis', fig.cap = "Contribuição para a Seguridade Social por Estado"}
+data_pnad %>% 
+  group_by(UF) %>% 
+  count(VD4012, wt = V1028) %>% 
+  drop_na() %>% 
+  group_by(UF) %>% 
+  mutate(prop = n/sum(n) %>% as.double()) %>% 
+  filter(VD4012 == "Contribuinte") %>% 
+  bind_cols(norte = c(rep("Norte",16), rep("Sul",11))) %>% 
+  ggplot(aes(x = fct_reorder(UF, prop), y = prop, fill = norte)) +
+  geom_col(size = 0.8)+
+  theme_bw() +
+  coord_flip()+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_fill_viridis(discrete = TRUE, end = 0.8, begin = 0.2) +
+  labs(y = "Percentagem dos trabalhadores que contribuiam para a Seguridade Social", x ="", subtitle = "", fill = "Macro região", caption = "Fonte: IBGE") 
+```
+
+O Brasil apresentand alto grau de informalidade no mercado de trabalho. Os homens trabalham proporcionalmente mais que as mulheres no mercado de trabalho informal [@ulyssea2005informalidade], [@corseuil2015criterios] e, portanto, espera-se que o percentual de homens que contribuem para o sistema de seguridade nacional seja menor. Como pode ser visto na Tabela \@ref(tab:sex) isso é observado no Brasil.
+
+```{r sex, results='asis'}
+data_pnad %>% 
+  group_by(V2007) %>% 
+  count(VD4012, wt = V1028) %>% 
+  drop_na() %>% 
+  group_by(V2007) %>% 
+  mutate(prop = n/sum(n) %>% as.double()) %>% 
+  filter(VD4012 == "Contribuinte" ) %>% 
+  select(V2007, prop) %>% 
+  ungroup() %>% 
+  mutate(prop = scales::percent(prop, accuracy = .01)) %>% 
+  set_names(c("Sexo", "Proporção")) %>% 
+  kable(caption = "Proporção de contribuição ao sistema de seguridade social por sexo")
+```
+
+A desigualdade brasileira encontra-se também em linhas raciais. A renda média das pessoas negras (pretas e pardas) é menor que a das brancas, sendo negros trabalham mais no setor informal. Esses fatos são refletidos na cobertura da seguridade social como descrita na Tabela \@ref(tab:race), com negros tendo menor cobertura que brancos e amarelos. Isso mostra que negros são mais vulneráveis a circunstâncias que brancos e amarelos visto que não tem auxílio tão direto da rede de seguridade social. 
+
+```{r race, results='asis'}
+data_pnad %>% 
+  group_by(V2010) %>% 
+  count(VD4012, wt = V1028) %>% 
+  drop_na() %>% 
+  group_by(V2010) %>% 
+  mutate(prop = n/sum(n) %>% as.double()) %>% 
+  filter(VD4012 == "Contribuinte" ) %>% 
+  select(V2010,  prop) %>% 
+  mutate(prop = scales::percent(prop, accuracy = .01)) %>% 
+  set_names(c("Raça", "Proporção")) %>%
+  kable(caption = "Proporção de contribuição ao sistema de seguridade social por raça")
+```
+
+
+## Conclusão
+
+Essa foi uma avaliação exploratória da cobertura da seguridade social em alguns eixos relevantes para o Brasil. O resultado relativo a sexo pode não ser esperado a primeira vista, porém, ao se observar a natureza do mercado de trabalho informal no Brasil este resultado não é estranho. Os outros resultados se encaixam bem com o senso comum da desigualdade brasileira. 
+
+## Pacotes usados
+
+Os seguintes pacotes foram usados:
+
+* [dplyr](https://dplyr.tidyverse.org/);
+* [viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html);
+* [knitr](https://www.r-project.org/nosvn/pandoc/knitr.html);
+* [PNADcIBGE](https://cran.r-project.org/web/packages/PNADcIBGE/readme/README.html);
+
+## Referências

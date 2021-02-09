@@ -17,7 +17,7 @@ bibliography: [bibliografia.bib]
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-De quem é Star Wars? Quem decide a história de Luke Skywalker? A noção de que alguém é dono de uma história, ou de uma propriedade intelectual é algo normal para nossa sociedade, porém, é interessante ver como a ideia de que alguém pode ser dono de uma ideia interage com a economia, especificamente com o teorema de Coase. O teorema de Coase [@coase1960problem] é importante teorema na ciência economica. Uma forma de resumir o teorema é:
+De quem é Star Wars? Quem decide a história de Luke Skywalker? A noção de que alguém é dono de uma história, ou de uma propriedade intelectual é algo normal para nossa sociedade, porém, é interessante ver como a ideia de que alguém pode ser dono de um conceito interage com a economia, especificamente com o teorema de Coase. O teorema de Coase [@coase1960problem] é importante resultado na ciência economica. Uma forma de resumi-lo é:
 
 > Se os custos de transação[^1] são nulos e os direitos de propriedade bem definidos a solução final (a alocação final) é Pareto-eficiente[^2] independente da alocação inicial de recursos.
 
