@@ -1,0 +1,81 @@
+---
+title: "Lista de Nomes Neutros"
+author: "Henrique de Mello Santos de Assunção"
+date: "19/02/2021"
+output: bookdown::html_document2
+categories:
+  - Brasil
+  - Nomes
+tags:
+  - brasilio
+---
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+# Carregando pacotes
+library(tidyverse)
+library(knitr)
+
+# Carregando dados
+nomes <- read_csv("https://data.brasil.io/dataset/genero-nomes/nomes.csv.gz") %>% 
+  mutate(posicao = rank(-frequency_total))
+```
+
+A língua portuguesa faz com que seja muito difícil falar de modo neutro em relação a gênero. A maioria das palavras não é neutra, sendo ou do gênero masculino ou feminino. A maioria dos nomes não é neutro, sendo masculino ou feminino. Isso pode causar algum desconforto para as pessoas que querem utilizar linguagem neutra, ou nomes neutros.
+
+A pesquisa que fiz na internet para a lista de nomes neutros não me deu resultados satisfatórios[^1]. A maioria dos nomes que eu encontrei eram contrações, estrangeirismos, nomes curtos ou intuitivamente ligados a um gênero e o uso para o outro gênero era algo forçado, estranho ou contra intuitivo. O uso do nome Ártemis e Apolo como neutros soou como estranho para mim, uma vez que associo os nomes às divindades gregas que são apresentadas com gêneros definidos
+
+Por isso fiz um exercício de observar quais eram os nomes neutros na prática, ou seja que eram utilizados tanto por homens como mulheres, segundo o Censo 2010. Usando a base de dados Gênero de Nomes do Instituto Brasileiro de Geografia e Estatística, disponível no portal brasil.io, sendo que os dados foram tratados por Álvaro Justen/Brasil.IO, considerei que nomes são razoavelmente comuns (segundo um limiar arbitrário de número de usos) e são usados tanto por mulheres como por homens (o número de homens é próximo do número de mulheres que usam o nome).
+
+Exemplificando a situação do uso de nomes neutros no Brasil, considere dois exemplos, um em que os nomes são utilizados predominantemente por um sexo e outro em que o nome é usado de maneira equilibrada entre os dois sexos:
+
+* Maria é usado 11.734.129 na base com 99,66% dos usos sendo por mulheres;
+* Cassi é usado 172 vezes, 86 por homens e 86 por mulheres com 50% dos usos sendo por homens e 50% por mulheres.
+
+Observei os 15 nomes com mais de mil aparições que possuíssem o maior equilíbrio entre o uso para homens e mulheres, ou seja, que o percentual relativo de mulheres (ou homens) das pessoas com aquele nome mais se aproximasse de 50%. O resultado esta na Tabela \@ref(tab:tabela1000).
+
+```{r tabela1000,  results = 'asis'}
+nomes %>% 
+  mutate(posicao = rank(- frequency_total, ties.method = "min")) %>% 
+  filter(frequency_total > 1000) %>% 
+  dplyr::slice_min(ratio, n = 15) %>% 
+  arrange(frequency_total) %>% 
+  mutate(first_name = str_to_title(first_name),
+         alternative_names = str_to_title(alternative_names)) %>% 
+  select(Nome = first_name, Mulheres = frequency_female, Homens = frequency_male, `Razão` = ratio, `Posição` = posicao, `Nomes alternativos` =  alternative_names) %>% 
+  kable(caption = "Lista de nomes neutros com mais de 1.000 pessoas utilizando o nome")
+```
+
+Explicando a tabela:
+
+* Nome: Nome avaliado;
+* Nomes alternativos: Versões alternativas do nome avaliado;
+* Mulheres: Número de mulheres com esse nome;
+* Homens: Número de homens com esse nome;
+* Razão: Percentual de homens ou mulheres (dependendo de qual utilizar mais o nome) sobre o total de pessoas com esse nome;
+* Posição: Posição do nome na lista de nomes mais comuns, ou seja, se há três nomes mais comuns que o nome avaliado este estará na quarta posição.
+
+Eu fiz uma segunda avaliação. Nela, observei quais alterações eram observadas se utiliza-se nomes mais comuns (acima de 10.000 pessoas com o nome ou versões alternativas dele). O resultado é a Tabela \@ref(tab:tabela10000):
+
+```{r tabela10000, results = 'asis'}
+nomes %>% 
+  mutate(posicao = rank(- frequency_total, ties.method = "min")) %>% 
+  filter(frequency_total > 10000) %>% 
+  arrange(frequency_total) %>% 
+  dplyr::slice_min(ratio, n = 15) %>% 
+  mutate(first_name = str_to_title(first_name),
+         alternative_names = str_to_title(alternative_names)) %>% 
+  select(Nome = first_name, Mulheres = frequency_female, Homens = frequency_male, `Razão` = ratio, `Posição` = posicao, `Nomes alternativos` =  alternative_names) %>% 
+  kable(caption = "Lista de nomes neutros com mais de 10.000 pessoas utilizando o nome")
+```
+
+Os nomes apresentados acima podem não ser os mais comuns no Brasil, Aldeniar (o mais comum da segunda tabela) e Edir (mais comum na primeira tabela) ocupam a posição 504 e 1.425 na lista de nomes mais comuns. Acho que os resultados são satisfatórios, pois  os dois gêneros não é contra intuitivo para a maioria destes nomes. Essa lista pode auxiliar pessoas que procuram utilizar nomes neutros e essa base pode auxiliar muito o estudo do uso de nomes no Brasil.
+
+## Fontes
+
+* [Projeto Github de Álvaro Justen](https://github.com/turicas/genero-nomes);
+* [Portal Brasil/IO](https://brasil.io/home/);
+* [Censo 2010 do Instituto Brasileiro de Geografia e Estatística](https://www.ibge.gov.br/estatisticas/sociais/trabalho/9662-censo-demografico-2010.html?=&t=o-que-e).
+
+[^1]: Observei [rexistencianaobinaria](https://rexistencianaobinaria.tumblr.com/post/154570738028/lista-de-nomes-neutros-lista-adaptada-do) e [indentidades](https://identidades.wikia.org/pt-br/wiki/Lista_de_nomes_neutros). Esse texto não é uma crítica ao serviço que esses portais oferecem, mas uma avaliação da *minha* opinião sobre a lista.
