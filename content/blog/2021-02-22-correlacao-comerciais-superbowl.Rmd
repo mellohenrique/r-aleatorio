@@ -1,0 +1,70 @@
+---
+title: "Correlação nas propagandas do Superbowl"
+author: Henrique de Mello Santos de Assunção
+date: '2021-02-22'
+output: 
+  bookdown::html_document2:
+    includes:
+      in_header: header.html
+categories:
+  - Esportes
+  - Estatística
+tags:
+  - Futebol Americano
+---
+
+O Superbowl é um evento esportivo importante do ano. Uma das principais partes do superbowl, como era de se esperar de um evento americano, são as propagandas que acontecem no intervalo. Essa propagandas são _especiais_ tanto pelo grande nível de esforço colocado pelas empresas assim como o alto preço que elas pagam pelo espaço publicitário.
+
+Eu fiz um exercício de avaliação dos dados da propagando do superbowl. Os dados estão no [Github/fivethirtyeight](https://github.com/fivethirtyeight/superbowl-ads) e contém informações dos comerciais das 10 marcas que mais fizeram propaganda no superbowl de 2000 a 2020. As primeiras 8 linhas da tabela com os dados do superbowl podem ser visualizadas na Tabela \@ref(tab:primeiraslinhas).
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+``` 
+
+```{r}
+# Obtenção dos dados
+dados <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/superbowl-ads/main/superbowl-ads.csv")
+
+## Limpeza dos dados
+y <- lapply(dados[,-1:-4], stringi::stri_trans_toupper)
+y <- lapply(y, as.logical)
+y <- sapply(y, as.numeric)
+
+# Matriz de Correlação
+corr_matrix <- cor(y)
+
+# Definindo cores
+col<- colorRampPalette(c("red", "white", "royalblue"))(20)
+```
+
+```{r primeiraslinhas}
+knitr::kable(head(dados), caption = "Primeiras oito linhas da tabela")
+```
+
+A tabela tem as seguintes informações:
+
+* year: Ano em que a propaganda foi exibida no superbowl;
+* brand: Marca do anunciando, agrupados em caso de diferenças de pronúncia e sub-marcas;
+* superbowl_ads_dot_com_url: Link para a página da propagando do site superbowl-ads.com;
+* youtube_url: Link com o vídeo do youtube da propaganda;
+* funny: Variável sobre se a propaganda tentou ser engraçada;
+* show_product_quickly: Variável se a propaganda mostrou rapidamente o produto;
+* patriotic: Variável se a propaganda foi patriótica;
+* celebrity: Variável se há alguma celebridade no comercial;
+* danger: Variável se o comercial passa a ideia de perigo;
+* animals: Variável se há animais no comercial;
+* use_sex: Variável se o comercial mostra/usa sexo.
+
+Observei se há alguma correlação nas ideias que o comercial passa. Os resultados podem ser observados no gráficos de correlação abaixo. Valor igual a um significa que os valores são perfeitamente correlacionados, sempre aparecem juntos, valor -1 significa que eles nunca aparecem juntos e 0 significa que a presença dessa ideia não tem relação nenhuma com a presença de outra ideia.
+
+```{r results = "asis"}
+corrplot::corrplot(corr_matrix, diag = FALSE)
+```
+
+```{r results = "asis"}
+corrplot::corrplot(corr_matrix, method = "number", order = "hclust", addrect = 2, tl.col = "black", tl.srt = 45, col = col, number.cex=.85 )
+```
+
+Os resultados foram suurpreendentes para mim. A maioria das ideias são independentes. A ideia de patriotismo tem correlação negativa com idea de graça, sexo e perigo. A principal relação é a correlação negativa entre comerciais patrioticos e comerciais engraçados.
+

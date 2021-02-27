@@ -1,0 +1,46 @@
+---
+title: "Nuvem de jogos"
+author: Henrique de Mello Santos de Assunção
+date: '2021-02-27'
+output: 
+  bookdown::html_document2:
+    includes:
+      in_header: header.html
+categories:
+  - Jogos
+  - Análise de Linguagem
+tags:
+  - Kaggle
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+Jogos de tabuleiro são um passatempo muito importante na minha vida. Começei jogando os clássico _brasileiros_ como jogo imobiliário, jogo da vida e war e posteriormente passei para _drogas_ mais pesadas como colonizadores de Catan, Carcassone, Terra Mystica, Dixit, ... 
+
+Os jogos sao ótimos em criar um ambiente divertido para expressar a criatividade ou criar uma arena para uma batalha de astúcia ou estrategia. As vezes é legal ver o circo pegar fogo ou queimar até o último neurônio calculando uma jogada por alguns punhados de pontos a mais. 
+
+Essa paixão por jogos me faz tentar avaliar algumas características de jogos de tabuleiro nesse _blog_. Utilizando uma base de dados que encontrei no [kaggle Markus Sheppard](https://www.kaggle.com/mshepherd/board-games), segundo a página os dados são referentes a jogos de tabuleiros de diferentes fontes incluindo o site [Board Game Geek](https://boardgamegeek.com/). Os dados que utilizei são dados de 94.820 jogos de tabuleiro diferentes. 
+
+A avaliaçãoaqui realizada foi restrita a uma avaliação dos nomes dos jogos de tabuleiro. A ideia foi observar se aparece algum tema específico de acordo com o padrão observado nos nomes. Desta forma, limpei os nomes dos jogos de tabuleiros de palavras que não agregariam informação a avaliação (palavras como "a", "de", "da") das línguas ingês, espanhol, alemão e português. Então contei as palavras diferentes que ficaram e fiz uma nuvem de palavras, com as palavras que aparecem mais sendo maiores na nuvem de palavras.
+
+```{r avaliacao}
+library(magrittr)
+library(stopwords)
+
+dados <- readr::read_csv("C:/Mestre/projetos-r/dados/bgg_GameItem.csv.zip")
+
+contagem_palavras <- dados %>% 
+  tidytext::unnest_tokens(palavra, name) %>% 
+  dplyr::filter(!palavra %in% setdiff(c(stopwords(), stopwords("de"), stopwords("es"), stopwords("pt"), "game", "edition"), "war")) %>% 
+  dplyr::count(palavra, sort = TRUE) %>% 
+  set_names(c("palavra", "freq"))
+```
+
+
+```{r nuvem_palavras, results = 'asis'}
+wordcloud2::wordcloud2(contagem_palavras)
+```
+
+Existe uma grande importância de conflito na temática de jogos de tabuleiro, podendo ser visto pela proeminência de palavras como "war", "battle", "wars", "combat". Outras ideias aparecem de maneira secundária na nuvem de palavras. Jogos de perguntas e respostas são representandos por palavras como "trivia" e "quiz". A várias referências a diferentes esportes como "baseball" e "golf". Temas de fantásia, ciência e exploração aparecem em palavras como "space", "dragon" e "monster". Por fim, há varias ideias expressas, porém a ideia de conflito e conflito bélico parecem ter uma grande proeminência em nomes de jogos de tabuleiro.

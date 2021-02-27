@@ -1,0 +1,164 @@
+---
+title: "Correlação nas propagandas do Superbowl"
+author: Henrique de Mello Santos de Assunção
+date: '2021-02-22'
+output: 
+  bookdown::html_document2:
+    includes:
+      in_header: header.html
+categories:
+  - Esportes
+  - Estatística
+tags:
+  - Futebol Americano
+---
+
+
+
+<p>O Superbowl é um evento esportivo importante do ano. Uma das principais partes do superbowl, como era de se esperar de um evento americano, são as propagandas que acontecem no intervalo. Essa propagandas são <em>especiais</em> tanto pelo grande nível de esforço colocado pelas empresas assim como o alto preço que elas pagam pelo espaço publicitário.</p>
+<p>Eu fiz um exercício de avaliação dos dados da propagando do superbowl. Os dados estão no <a href="https://github.com/fivethirtyeight/superbowl-ads">Github/fivethirtyeight</a> e contém informações dos comerciais das 10 marcas que mais fizeram propaganda no superbowl de 2000 a 2020. As primeiras 8 linhas da tabela com os dados do superbowl podem ser visualizadas na Tabela <a href="#tab:primeiraslinhas">1</a>.</p>
+<pre class="r"><code># Obtenção dos dados
+dados &lt;- read.csv(&quot;https://raw.githubusercontent.com/fivethirtyeight/superbowl-ads/main/superbowl-ads.csv&quot;)
+
+## Limpeza dos dados
+y &lt;- lapply(dados[,-1:-4], stringi::stri_trans_toupper)
+y &lt;- lapply(y, as.logical)
+y &lt;- sapply(y, as.numeric)
+
+# Matriz de Correlação
+corr_matrix &lt;- cor(y)
+
+# Definindo cores
+col&lt;- colorRampPalette(c(&quot;red&quot;, &quot;white&quot;, &quot;royalblue&quot;))(20)</code></pre>
+<pre class="r"><code>knitr::kable(head(dados), caption = &quot;Primeiras oito linhas da tabela&quot;)</code></pre>
+<table>
+<caption><span id="tab:primeiraslinhas">Table 1: </span>Primeiras oito linhas da tabela</caption>
+<colgroup>
+<col width="2%" />
+<col width="5%" />
+<col width="34%" />
+<col width="22%" />
+<col width="3%" />
+<col width="10%" />
+<col width="5%" />
+<col width="5%" />
+<col width="3%" />
+<col width="4%" />
+<col width="4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="left">brand</th>
+<th align="left">superbowl_ads_dot_com_url</th>
+<th align="left">youtube_url</th>
+<th align="left">funny</th>
+<th align="left">show_product_quickly</th>
+<th align="left">patriotic</th>
+<th align="left">celebrity</th>
+<th align="left">danger</th>
+<th align="left">animals</th>
+<th align="left">use_sex</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="left">Toyota</td>
+<td align="left"><a href="https://superbowl-ads.com/good-odds-toyota/" class="uri">https://superbowl-ads.com/good-odds-toyota/</a></td>
+<td align="left"><a href="https://www.youtube.com/watch?v=zeBZvwYQ-hA" class="uri">https://www.youtube.com/watch?v=zeBZvwYQ-hA</a></td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="left">Bud Light</td>
+<td align="left"><a href="https://superbowl-ads.com/2020-bud-light-seltzer-inside-posts-brain/" class="uri">https://superbowl-ads.com/2020-bud-light-seltzer-inside-posts-brain/</a></td>
+<td align="left"><a href="https://www.youtube.com/watch?v=nbbp0VW7z8w" class="uri">https://www.youtube.com/watch?v=nbbp0VW7z8w</a></td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">False</td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">False</td>
+<td align="left">False</td>
+</tr>
+<tr class="odd">
+<td align="right">2006</td>
+<td align="left">Bud Light</td>
+<td align="left"><a href="https://superbowl-ads.com/2006-bud-light-bear-attack/" class="uri">https://superbowl-ads.com/2006-bud-light-bear-attack/</a></td>
+<td align="left"><a href="https://www.youtube.com/watch?v=yk0MQD5YgV8" class="uri">https://www.youtube.com/watch?v=yk0MQD5YgV8</a></td>
+<td align="left">True</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">False</td>
+</tr>
+<tr class="even">
+<td align="right">2018</td>
+<td align="left">Hynudai</td>
+<td align="left"><a href="https://superbowl-ads.com/hope-detector-nfl-super-bowl-lii-hyundai/" class="uri">https://superbowl-ads.com/hope-detector-nfl-super-bowl-lii-hyundai/</a></td>
+<td align="left"><a href="https://www.youtube.com/watch?v=lNPccrGk77A" class="uri">https://www.youtube.com/watch?v=lNPccrGk77A</a></td>
+<td align="left">False</td>
+<td align="left">True</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">False</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="left">Bud Light</td>
+<td align="left"><a href="https://superbowl-ads.com/2003-bud-light-hermit-crab/" class="uri">https://superbowl-ads.com/2003-bud-light-hermit-crab/</a></td>
+<td align="left"><a href="https://www.youtube.com/watch?v=ovQYgnXHooY" class="uri">https://www.youtube.com/watch?v=ovQYgnXHooY</a></td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">False</td>
+<td align="left">False</td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">True</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="left">Toyota</td>
+<td align="left"><a href="https://superbowl-ads.com/2020-toyota-go-places-with-cobie-smulders/" class="uri">https://superbowl-ads.com/2020-toyota-go-places-with-cobie-smulders/</a></td>
+<td align="left"><a href="https://www.youtube.com/watch?v=f34Ji70u3nk" class="uri">https://www.youtube.com/watch?v=f34Ji70u3nk</a></td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">False</td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">True</td>
+<td align="left">False</td>
+</tr>
+</tbody>
+</table>
+<p>A tabela tem as seguintes informações:</p>
+<ul>
+<li>year: Ano em que a propaganda foi exibida no superbowl;</li>
+<li>brand: Marca do anunciando, agrupados em caso de diferenças de pronúncia e sub-marcas;</li>
+<li>superbowl_ads_dot_com_url: Link para a página da propagando do site superbowl-ads.com;</li>
+<li>youtube_url: Link com o vídeo do youtube da propaganda;</li>
+<li>funny: Variável sobre se a propaganda tentou ser engraçada;</li>
+<li>show_product_quickly: Variável se a propaganda mostrou rapidamente o produto;</li>
+<li>patriotic: Variável se a propaganda foi patriótica;</li>
+<li>celebrity: Variável se há alguma celebridade no comercial;</li>
+<li>danger: Variável se o comercial passa a ideia de perigo;</li>
+<li>animals: Variável se há animais no comercial;</li>
+<li>use_sex: Variável se o comercial mostra/usa sexo.</li>
+</ul>
+<p>Observei se há alguma correlação nas ideias que o comercial passa. Os resultados podem ser observados no gráficos de correlação abaixo. Valor igual a um significa que os valores são perfeitamente correlacionados, sempre aparecem juntos, valor -1 significa que eles nunca aparecem juntos e 0 significa que a presença dessa ideia não tem relação nenhuma com a presença de outra ideia.</p>
+<pre class="r"><code>corrplot::corrplot(corr_matrix, diag = FALSE)</code></pre>
+<p><img src="/blog/2021-02-22-correlacao-comerciais-superbowl_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>corrplot::corrplot(corr_matrix, method = &quot;number&quot;, order = &quot;hclust&quot;, addrect = 2, tl.col = &quot;black&quot;, tl.srt = 45, col = col, number.cex=.85 )</code></pre>
+<p><img src="/blog/2021-02-22-correlacao-comerciais-superbowl_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Os resultados foram suurpreendentes para mim. A maioria das ideias são independentes. A ideia de patriotismo tem correlação negativa com idea de graça, sexo e perigo. A principal relação é a correlação negativa entre comerciais patrioticos e comerciais engraçados.</p>
