@@ -1,0 +1,75 @@
+---
+title: "Nomes neutros III: Última letra"
+author: Henrique de Mello Santos de Assunção
+date: "2021-03-15"
+output: bookdown::html_document2
+categories:
+  - Brasil
+  - Nomes
+tags:
+  - brasilio
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+
+```
+
+Eu estou trabalhando com uma base de dados sobre nomes no Brasil. O meu interesse atual é observar caracterísitcas de nomes neutros. Estou usando a base de dados Gênero de Nomes do Instituto Brasileiro de Geografia e Estatística, disponível no portal brasil.io, sendo que os dados foram tratados por Álvaro Justen/Brasil.IO.
+
+A minha primeira avaliação foi observar quais são os nomes neutros mais comuns. Nome neutro foi entendido como algum nome que é usado tanto por homens e mulheres, sendo que o sexo que utiliza mais representa no máximo $X%$ do total de pessoas com esse nome. O valor de X é completamente arbitrário
+
+Os nomes avaliados pareciam apresentar características comuns. Em especial as últimas letras serem em geral _r_, _s_, _i_ e _e_. De modo a observar quais letras são as mais comuns em nomes neutros contei todas as letras finais dos nomes neutros, considerando 4 tipos diferentes de X, 90%, 80%, 70% e 60% e apresento os resultados nos gráficos \@ref(@prop9), \@ref(@prop8), \@ref(@prop7) e \@ref(@prop6), respectivamente. Considerei para cada limiar as 6 letras mais comuns e agrupei as outras letras na categoria _Outras Letras_ de modo a não poluir a visualização.
+
+
+```{r contagem}
+# Carregando pacotes
+library(tidyverse)
+library(knitr)
+
+# Carregando dados
+nomes <- read_csv("https://data.brasil.io/dataset/genero-nomes/nomes.csv.gz")
+
+# Função
+conta_ultima_letra_fator <- function(dados = nomes, razao){
+  dados %>% 
+    filter(ratio < razao) %>% 
+    mutate(ultima_letra = str_extract(first_name, "[A-Z]$"),
+           fator_ultima_letra = fct_lump(ultima_letra, n = 6, other_level = "Outras Letras")) %>%  
+    count(fator_ultima_letra) %>% 
+    mutate(tipo = paste0("Proporção < ", razao))
+}
+
+# Gerando gráficos
+graficos <- map2(map(c(0.9, 0.8, 0.7, 0.6), ~conta_ultima_letra_fator(razao = .x)),
+          c(0.9, 0.8, 0.7, 0.6),
+  ~(ggplot(.x , aes(x = fct_reorder(fator_ultima_letra, n), y = n)) +
+  geom_col() +
+  coord_flip() +
+  theme_bw() +
+  labs(y = "", x = "Última Letra", title = "Contagem de Última Letra de nomes neutros", subtitle = paste("Considerando neutros nomes com razão <", .y))))
+```
+
+
+```{r prop9, results="asis"}
+graficos[[1]]
+```
+
+```{r prop8, results="asis"}
+graficos[[2]]
+```
+
+```{r prop7, results="asis"}
+graficos[[3]]
+```
+
+```{r prop6, results="asis"}
+graficos[[4]]
+```
+
+Observa-se que 3 letras diferentes apresentam-se nos 4 limiares como as letras mais comuns, _e_, _i_ e _r_. Outras letras importantes para utilização do nome pelos dois sexos são _s_, _y_ e _n_. Dois aspectos importantes são que _a_ ainda tem uma importância grande caso considere o mais alto limiar, o que indica que _a_ deve ser uma letra relevante para os nomes que são utilizados majoritariamente por um sexo[^1] mas com algum uso pelo outro (de 80 a 90% do uso por um sexo). Por fim, a falta do _o_ em qualquer tabela pode ser pelo menor número de nomes que terminam em _a_ do que em _o_, então mesmo com poucos nomes neutros em ambas as letras o _a_ ainda aparece devido ao volume.
+
+Uma avaliação posterior vai ser quais as letras iniciais e finais mais comuns e qual o percentual utilizado por cada sexo.
+
+[^1] 97,76% dos nomes com a última letra A são usados principalmente por mulheres. 98,24% dos nomes que terminam em O são usados principalmente por homens.

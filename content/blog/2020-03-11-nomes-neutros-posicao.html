@@ -1,0 +1,148 @@
+---
+title: "Nomes Neutros II: Posição"
+author: Henrique de Mello Santos de Assunção
+date: "2021-03-15"
+output: bookdown::html_document2
+categories:
+  - Brasil
+  - Nomes
+tags:
+  - brasilio
+---
+
+
+
+<p>Essa é a demonstração de um fracasso. Eu tinha um hipótese sobre nomes neutros que eu gostaria de testar. A hipótese é de que nomes neutros são nomes que são pouco comuns no conjunto de nomes.</p>
+<p>Essa hipótese surgiu na primeira avaliação de nomes neutros. A maioria dos nomes neutros estavam muito distante em popularidade em relação aos nomes mais comuns como <em>Maria</em> e <em>João</em>. O que eu não considerei, embora soubesse, era que a distância do nomes mais comuns para alguns razoavelmente comuns é de uma ou duas ordem de magnitude. Nomes são incrivelmente concentrados, o nome mais comum <em>Maria</em> representa, sozinho 6,48% de todas as pessoas, o décimo mais comum <em>Lucas</em> representa 0,62%.</p>
+<p>O meu teste então foi entender em que decil de popularidade os nomes neutros se encontravam. Nome neutro foi entendido como algum nome que é usado tanto por homens e mulheres, sendo que o sexo que utiliza mais representa no máximo <span class="math inline">\(X%\)</span> do total de pessoas com esse nome. O valor de X é completamente arbitrário. Nesta avaliação considerei <span class="math inline">\(X = 80%\)</span>. Os resultados podem ser observados no gráfico <a href="#tab:tabela"><strong>??</strong></a>.</p>
+<pre class="r"><code># Carregando pacotes
+library(tidyverse)
+library(knitr)
+
+# Carregando dados
+nomes &lt;- read_csv(&quot;https://data.brasil.io/dataset/genero-nomes/nomes.csv.gz&quot;) %&gt;% 
+  mutate(posicao = rank(-frequency_total),
+         decil = ntile(frequency_total, 10),
+         neutro = ratio &lt; 0.8)</code></pre>
+<pre class="r"><code>nomes %&gt;% 
+  group_by(decil) %&gt;% 
+  summarise(maximo = max(frequency_total),
+            minimo = min(frequency_total),
+            soma = sum(neutro),
+            percentual = scales::percent(soma/n(), accuracy = 0.01, decimal.mark = &quot;,&quot;, big.mark = &quot;.&quot;),
+            palavras = n(),) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">decil</th>
+<th align="right">maximo</th>
+<th align="right">minimo</th>
+<th align="right">soma</th>
+<th align="left">percentual</th>
+<th align="right">palavras</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">24</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="left">0,00%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">30</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="left">0,00%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">37</td>
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="left">0,00%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">49</td>
+<td align="right">37</td>
+<td align="right">158</td>
+<td align="left">1,57%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">67</td>
+<td align="right">49</td>
+<td align="right">490</td>
+<td align="left">4,86%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">95</td>
+<td align="right">67</td>
+<td align="right">780</td>
+<td align="left">7,74%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">149</td>
+<td align="right">95</td>
+<td align="right">947</td>
+<td align="left">9,40%</td>
+<td align="right">10079</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">273</td>
+<td align="right">149</td>
+<td align="right">795</td>
+<td align="left">7,89%</td>
+<td align="right">10078</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">743</td>
+<td align="right">273</td>
+<td align="right">735</td>
+<td align="left">7,29%</td>
+<td align="right">10078</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">11734129</td>
+<td align="right">743</td>
+<td align="right">426</td>
+<td align="left">4,23%</td>
+<td align="right">10078</td>
+</tr>
+</tbody>
+</table>
+<p>A maioria dos nomes neutros encontra-se no décil 7. O problema é que os 9 primeiros décis são consideravelmente semelhantes. Enquanto o décil 10 tem nomes que aparecem 743 vezes e um nome que aparece 11.734.129 vezes. O problema é que em distribuições que são tão concentradas no topo uma avaliação de décis como a que eu fiz não é muito instrutiva.</p>
+<p>Uma maneira de se observar isso é observando os gráficos abaixo. O gráfico <em>normal</em> da posição da palavra no ranking de palavras mais utilizadas (eixo x) e frequência da palavra (eixo y) pode ser observado no Gráfico <a href="#fig:grafico">1</a>. Um gráfico idêntico só que com o eixo y na base log10 pode ser observado no Gráfico <a href="#fig:graficolog"><strong>??</strong></a>. O Gráfico <a href="#fig:grafico">1</a> é tão distorcido pelas primeiras posições que mal se pode identificar algo além dela. O Gráfico <a href="#fig:graficolog"><strong>??</strong></a> é um pouco mais claro e mostra a evolução da série, porém como está em escala logaritmica é um dif´cil de entender.</p>
+<pre class="r"><code>ggplot(nomes, aes(y = frequency_total, x = posicao)) +
+  geom_point() +
+  scale_y_continuous(labels = scales::number)+
+  theme_bw() +
+  labs(x = &quot;Posição&quot;, y = &quot;Frequência&quot;)</code></pre>
+<div class="figure"><span id="fig:grafico"></span>
+<img src="/blog/2020-03-11-nomes-neutros-posicao_files/figure-html/grafico-1.png" alt="Grafico Normal" width="672" />
+<p class="caption">
+Figure 1: Grafico Normal
+</p>
+</div>
+<pre class="r"><code>ggplot(nomes, aes(y = frequency_total, x = posicao)) +
+  geom_point() +
+  scale_y_continuous(trans=&#39;log10&#39;, labels = scales::number, breaks = c(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000))+
+  theme_bw() +
+  labs(x = &quot;Posição&quot;, y = &quot;Frequência&quot;)</code></pre>
+<p><img src="/blog/2020-03-11-nomes-neutros-posicao_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>A próxima etapa dessa avaliação é tentar entender se essa série se comporta como uma <em>power law</em> e t explicar o que é uma <em>power law</em>.</p>

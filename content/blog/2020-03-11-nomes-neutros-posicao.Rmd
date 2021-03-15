@@ -1,0 +1,67 @@
+---
+title: "Nomes Neutros II: Posição"
+author: Henrique de Mello Santos de Assunção
+date: "2021-03-15"
+output: bookdown::html_document2
+categories:
+  - Brasil
+  - Nomes
+tags:
+  - brasilio
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+Essa é a demonstração de um fracasso. Eu tinha um hipótese sobre nomes neutros que eu gostaria de testar. A hipótese é de que nomes neutros são nomes que são pouco comuns no conjunto de nomes. 
+
+Essa hipótese surgiu na primeira avaliação de nomes neutros. A maioria dos nomes neutros estavam muito distante em popularidade em relação aos nomes mais comuns como _Maria_ e _João_. O que eu não considerei, embora soubesse, era que a distância do nomes mais comuns para alguns razoavelmente comuns é de uma ou duas ordem de magnitude. Nomes são incrivelmente concentrados, o nome mais comum _Maria_ representa, sozinho 6,48% de todas as pessoas, o décimo mais comum _Lucas_ representa 0,62%.
+
+O meu teste então foi entender em que decil de popularidade os nomes neutros se encontravam. Nome neutro foi entendido como algum nome que é usado tanto por homens e mulheres, sendo que o sexo que utiliza mais representa no máximo $X%$ do total de pessoas com esse nome. O valor de X é completamente arbitrário. Nesta avaliação considerei $X = 80%$. Os resultados podem ser observados no gráfico \@ref(tab:tabela).
+
+```{r configuracao}
+# Carregando pacotes
+library(tidyverse)
+library(knitr)
+
+# Carregando dados
+nomes <- read_csv("https://data.brasil.io/dataset/genero-nomes/nomes.csv.gz") %>% 
+  mutate(posicao = rank(-frequency_total),
+         decil = ntile(frequency_total, 10),
+         neutro = ratio < 0.8)
+```
+
+```{r tabela}
+nomes %>% 
+  group_by(decil) %>% 
+  summarise(maximo = max(frequency_total),
+            minimo = min(frequency_total),
+            soma = sum(neutro),
+            percentual = scales::percent(soma/n(), accuracy = 0.01, decimal.mark = ",", big.mark = "."),
+            palavras = n(),) %>% 
+  knitr::kable()
+```
+
+A maioria dos nomes neutros encontra-se no décil 7. O problema é que os 9 primeiros décis são consideravelmente semelhantes. Enquanto o décil 10 tem nomes que aparecem 743 vezes e um nome que aparece 11.734.129 vezes. O problema é que em distribuições que são tão concentradas no topo uma avaliação de décis como a que eu fiz não é muito instrutiva. 
+
+Uma maneira de se observar isso é observando os gráficos abaixo. O gráfico _normal_ da posição da palavra no ranking de palavras mais utilizadas (eixo x) e frequência da palavra (eixo y) pode ser observado no Gráfico \@ref(fig:grafico). Um gráfico idêntico só que com o eixo y na base log10 pode ser observado no Gráfico \@ref(fig:graficolog). O Gráfico \@ref(fig:grafico) é tão distorcido pelas primeiras posições que mal se pode identificar algo além dela. O Gráfico \@ref(fig:graficolog) é um pouco mais claro e mostra a evolução da série, porém como está em escala logaritmica é um dif´cil de entender.
+
+```{r grafico,fig.cap= "Grafico Normal"}
+ggplot(nomes, aes(y = frequency_total, x = posicao)) +
+  geom_point() +
+  scale_y_continuous(labels = scales::number)+
+  theme_bw() +
+  labs(x = "Posição", y = "Frequência")
+
+```
+
+```{r graficolog, fig.cap= "Grafico Log"}
+ggplot(nomes, aes(y = frequency_total, x = posicao)) +
+  geom_point() +
+  scale_y_continuous(trans='log10', labels = scales::number, breaks = c(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000))+
+  theme_bw() +
+  labs(x = "Posição", y = "Frequência")
+```
+
+A próxima etapa dessa avaliação é tentar entender se essa série se comporta como uma _power law_ e t explicar o que é uma _power law_.
