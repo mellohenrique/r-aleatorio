@@ -1,0 +1,79 @@
+---
+title: "Análise exploratória de Jogos de tabuleiro"
+author: Henrique de Mello Santos de Assunção
+date: '2021-03-19'
+output: 
+  bookdown::html_document2:
+    includes:
+      in_header: header.html
+categories:
+  - Jogos
+  - Análise Exploratória
+tags:
+  - Kaggle
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>Em algum momento do tempo eu tenho que usar aprendizado de máquinas (<em>machine learning</em>) para avaliar jogos de tabuleiro. É um tópico que eu gosto (jogo de tabuleiro) e uma ferramenta muito poderosa (aprendizado de máquinas). Esse é um projeto de médio prazo na minha vida, principalmente para me forçar a utilizar aprendizado de máquinas para algo.</p>
+<p>O primeiro passo nesse projeto é fazer uma análise exploratória dos dados. É importantissimo fazer essa etapa em todas as análises de dados. A familiaridade com a base permite descartar resultados estapafúrdios que possam vir a ocorrer.
+Isso permite ter um olhar crítico em relação ao seu projeto e não imaginar que os resultados obtidos são de inspiração divina.</p>
+<p>A análise exploratória dos dados permite tirar algumas conclusões interessantes a respeito das bases, especificamente nesse caso a base de dados do <a href="https://www.kaggle.com/mshepherd/board-games">kaggle de Markus Sheppard</a> que utilizei na postagem <a href="/blog/2021-02-27-nuvem-de-jogos">nuvem de jogos</a>. Eu vou apresentar os resultados de três achados interessantes que encontrei na base.</p>
+<div id="a-maioria-dos-jogos-não-é-votada" class="section level2">
+<h2>A maioria dos jogos não é votada</h2>
+<pre class="r"><code>library(tidyverse)
+
+dados &lt;- readr::read_csv(&quot;C:/Mestre/projetos-r/dados/bgg_GameItem.csv.zip&quot;)</code></pre>
+<p>A base de dados possui informações de 99.252 jogos diferentes, com notas de votos de jogadores, nomes dos jogos, ano de criação. Pode se observar na figura <a href="#fig:votos10">1</a> que a maioria dos jogos possui menos de dez votos. Isso prejudica a comparação de jogos entre a base uma vez que as notas de jogos com poucos votos tendem a ser a muito voláteis, isso pode ser observado na figura <a href="#fig:gruposvotos">2</a>.</p>
+<pre class="r"><code>ggplot(dados, aes(x = (num_votes &gt; 9))) +
+  geom_bar() +
+  theme_bw() +
+  labs(x = &quot;Dez ou mais votos&quot;, y = &quot;&quot;, caption = &quot;Fonte Kagge de Markus Sheppard&quot;)</code></pre>
+<div class="figure"><span id="fig:votos10"></span>
+<img src="/blog/2021-03-19-aed-jogos_files/figure-html/votos10-1.png" alt="Número de jogos com1 10 ou mais votos" width="672" />
+<p class="caption">
+Figure 1: Número de jogos com1 10 ou mais votos
+</p>
+</div>
+</div>
+<div id="pontuação-média-aumenta-com-a-popularidade" class="section level2">
+<h2>Pontuação média aumenta com a popularidade</h2>
+<p>Um grande problema pode ser observado no gráfico <a href="#fig:gruposvotos">2</a>. Observa-se que a nota dos jogos aumenta de acordo com a quantidade de jogos que ele recebe. Jogos com 5 a 10 votos tem nota média 6 enquanto jogos com 10.000 ou mais votos tem média 7,5. Logo o problema eterno se apresenta, jogos populares tem maior nota por serem populares, ou jogos bons são mais populares por serem bons<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. O que pode se observar que popularidade está liga a nota média do jogo.</p>
+<pre class="r"><code>dados %&gt;% 
+  filter(num_votes != 0, !is.na(num_votes)) %&gt;% 
+  mutate(grupo = cut(num_votes, c(1, 5, 10, 100, 1000, 10000, 10000000), right = FALSE)) %&gt;% 
+  ggplot(aes(x = avg_rating, y = grupo)) +
+  ggridges::geom_density_ridges() +
+  theme_bw() +
+  labs(x = &quot;Nota&quot;, y = &quot;Grupo do jogo de acordo com número de votos&quot;, caption = &quot;Fonte Kagge de Markus Sheppard&quot;)</code></pre>
+<div class="figure"><span id="fig:gruposvotos"></span>
+<img src="/blog/2021-03-19-aed-jogos_files/figure-html/gruposvotos-1.png" alt="Densidade da nota média dos jogos por grupo que ele pertence de acordo com o número de votos" width="672" />
+<p class="caption">
+Figure 2: Densidade da nota média dos jogos por grupo que ele pertence de acordo com o número de votos
+</p>
+</div>
+</div>
+<div id="datas-interessantes" class="section level2">
+<h2>Datas interessantes</h2>
+<p>A base apresenta alguns jogos com datas de lançamento interessantes. 22 jogos antes do nascimento de Cristo. Destes 5 são do ano 3.000 a.C. So em 1.000 d.C a indústria de jogos de tabuleiro teria um ano mais inovador do que em 3.000 a.C. Há também 62 jogos de 2.022 e 1 de 2.023. Isso pode ser jogos que ainda vão ser publicados ou erros no cadastro do ano.</p>
+<p>A base tem um foco bem recente. Isso pode ser pela explosão no lançamento de novos jogos, assim como pelo cadastro ter um viés recentes. Isso é bem esperado e achei bem menos interessante que o ano 3.000 a.C ou os jogos do futuro. De modo ilustrativo pode se observar a densidade dos jogos da base na figura <a href="#fig:ano">3</a>.</p>
+<pre class="r"><code>dados %&gt;% 
+  filter(year &gt; 1900) %&gt;% 
+  ggplot(aes(x = year)) + 
+  geom_density() +
+  theme_bw() +
+  labs(x = &quot;Ano&quot;, y = &quot;Densidade&quot;)</code></pre>
+<div class="figure"><span id="fig:ano"></span>
+<img src="/blog/2021-03-19-aed-jogos_files/figure-html/ano-1.png" alt="Gráfico de densidade de jogos publicados por ano" width="672" />
+<p class="caption">
+Figure 3: Gráfico de densidade de jogos publicados por ano
+</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Há toda a questão de se as notas representam uma qualidade intrinseca do jogo também, ou seja, se pode se dizer que um jogo é bom por ter uma nota alta.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>

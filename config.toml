@@ -10,6 +10,7 @@ DefaultContentLanguage = "pt"
 # Set to "hide" or "show" all codes by default
 codefolding_show = "hide"
 
+
 [Author]
 name = "Henrique de Assunção"
 bio = "Cientista de dados brasileiro, mestre em economia. Gosto de economia, filosofia, teologia, arte, cultura, jogos..."
