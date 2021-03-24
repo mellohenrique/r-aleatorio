@@ -1,0 +1,49 @@
+---
+title: "Pandemia: Trabalho na pandemia e Segunda dose de vacinas no DF"
+author: Henrique de Mello Santos de Assunção
+date: '2021-03-24'
+output: 
+  bookdown::html_document2
+categories:
+  - Brasil
+  - Distrito Federal
+tags:
+  - Pandemia
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+``` 
+
+Eu tenho trabalhado com dados da pandemia do Covid-19 há quase um ano agora. O trabalho é triste. Foi um ano de contagem de casos e de caixões, e como o número de casos é correlacionado a sofrimento e morte, foi um contagem mortuária. Fiquei observando um número macabro aumentando. Dia após dia, semana após semana. Sentia saudades de avaliar dados de desemprego e pobreza.
+
+Após um ano muito difícil, finalmente aparece um dado sobre a pandemia que eu fico feliz de observar. Um número que fico feliz em observar crescer. O número de vacinas. O governo brasileiro começou a disponibilizar os dados de vacina no portal [opendatasus](https://opendatasus.saude.gov.br/en/dataset/covid-19-vacinacao). De modo a comemorar a disponibilização destes dados e da vacina fiz o gráfico \@ref(fig:vacinas). É um gráfico do número de pessoas que receberam a segunda dose no Distrito Federal.
+
+```{r}
+# Carregando pacotes
+library(data.table)
+library(ggplot2)
+
+# Baixando dados
+dados <- fread("https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/PNI/vacina/uf/2021-03-24/uf%3DDF/part-00000-35da3c5a-4fea-41fe-a817-6ad8c24fbc49.c000.csv", sep = ";", dec = ",", encoding = "UTF-8")
+
+# Calculando pessoas que receberam a segunda dose
+x <- dados[,.(id = paciente_id, data = as.Date(vacina_dataAplicacao))]
+x[, dose := sequence(.N), by = id]
+segunda_dose <- x[dose == 2,][,.(segunda_dose = .N), by = data]
+setorder(segunda_dose, data)[, total := cumsum(segunda_dose)]
+```
+
+
+```{r vacinas, results='asis', fig.cap = "Pessoas que receberam a segunda dose da vacina no Distrito Federal"}
+ggplot(segunda_dose, aes(x = data, y = total)) +
+         geom_line() +
+  labs(x = "", y= "Total de pessoas que receberam a 2º dose", caption = "Dados do portal opendatasus") +
+  theme_bw() +
+  scale_y_continuous(labels = scales::number_format(decimal.mark = ",", big.mark = ".")) +
+  scale_x_date(date_labels = "%B, %d")
+  
+```
+

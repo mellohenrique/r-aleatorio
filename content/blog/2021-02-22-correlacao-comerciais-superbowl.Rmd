@@ -3,9 +3,7 @@ title: "Correlação nas propagandas do Superbowl"
 author: Henrique de Mello Santos de Assunção
 date: '2021-02-22'
 output: 
-  bookdown::html_document2:
-    includes:
-      in_header: header.html
+  bookdown::html_document2
 categories:
   - Esportes
   - Estatística
